@@ -1,12 +1,13 @@
 from flask import Flask, render_template, request, jsonify
 import requests
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 
-# =====================
-# KONFIGURASI
-# =====================
-GEMINI_API_KEY = "AIzaSyBTnLmGI3uYQUn9azzoO8Q-yYvImuvc_4E"
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 PASAL_API_URL = "https://pasal.id/api/v1/search"
 GEMINI_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={GEMINI_API_KEY}"
 

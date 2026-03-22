@@ -1,0 +1,4 @@
+.env
+__pycache__/
+*.pyc
+cek_model.py
