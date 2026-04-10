@@ -1,12 +1,20 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Legatia — Asisten Hukum Indonesia</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         :root {
             --navy: #0f1f3d;
             --navy-light: #1a3460;
@@ -17,17 +25,27 @@
             --gray: #6b7280;
             --border: #e5e0d5;
         }
-        html { scroll-behavior: smooth; }
-        body { font-family: 'Inter', sans-serif; background: var(--white); color: var(--navy); }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--white);
+            color: var(--navy);
+        }
 
         /* NAVBAR */
         nav {
             position: fixed;
-            top: 0; left: 0; right: 0;
+            top: 0;
+            left: 0;
+            right: 0;
             z-index: 100;
             background: rgba(15, 31, 61, 0.97);
             backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(201,168,76,0.2);
+            border-bottom: 1px solid rgba(201, 168, 76, 0.2);
             padding: 0 60px;
             height: 68px;
             display: flex;
@@ -45,7 +63,10 @@
             text-decoration: none;
         }
 
-        .nav-cta { display: flex; gap: 10px; }
+        .nav-cta {
+            display: flex;
+            gap: 10px;
+        }
 
         .btn {
             padding: 9px 22px;
@@ -60,11 +81,33 @@
             align-items: center;
             gap: 6px;
         }
-        .btn-outline { background: transparent; border: 1px solid rgba(201,168,76,0.4); color: var(--gold); }
-        .btn-outline:hover { background: rgba(201,168,76,0.1); }
-        .btn-gold { background: var(--gold); border: 1px solid var(--gold); color: var(--navy); font-weight: 600; }
-        .btn-gold:hover { background: var(--gold-light); }
-        .btn-lg { padding: 14px 32px; font-size: 15px; border-radius: 8px; }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid rgba(201, 168, 76, 0.4);
+            color: var(--gold);
+        }
+
+        .btn-outline:hover {
+            background: rgba(201, 168, 76, 0.1);
+        }
+
+        .btn-gold {
+            background: var(--gold);
+            border: 1px solid var(--gold);
+            color: var(--navy);
+            font-weight: 600;
+        }
+
+        .btn-gold:hover {
+            background: var(--gold-light);
+        }
+
+        .btn-lg {
+            padding: 14px 32px;
+            font-size: 15px;
+            border-radius: 8px;
+        }
 
         /* HERO */
         .hero {
@@ -78,20 +121,24 @@
             position: relative;
             overflow: hidden;
         }
+
         .hero::before {
             content: '';
             position: absolute;
-            width: 600px; height: 600px;
-            background: radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 70%);
-            top: 50%; left: 50%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(201, 168, 76, 0.08) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
             transform: translate(-50%, -50%);
         }
+
         .hero-badge {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: rgba(201,168,76,0.1);
-            border: 1px solid rgba(201,168,76,0.25);
+            background: rgba(201, 168, 76, 0.1);
+            border: 1px solid rgba(201, 168, 76, 0.25);
             border-radius: 20px;
             padding: 6px 16px;
             font-size: 12px;
@@ -100,6 +147,7 @@
             letter-spacing: 0.5px;
             margin-bottom: 32px;
         }
+
         .hero h1 {
             font-family: 'Cormorant Garamond', serif;
             font-size: 68px;
@@ -109,231 +157,527 @@
             margin-bottom: 24px;
             max-width: 800px;
         }
-        .hero h1 em { font-style: italic; color: var(--gold); }
+
+        .hero h1 em {
+            font-style: italic;
+            color: var(--gold);
+        }
+
         .hero p {
             font-size: 18px;
-            color: rgba(255,255,255,0.6);
+            color: rgba(255, 255, 255, 0.6);
             max-width: 520px;
             margin: 0 auto 48px;
             line-height: 1.7;
             font-weight: 300;
         }
-        .hero-cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
+        .hero-cta {
+            display: flex;
+            gap: 14px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
         .hero-stats {
             display: flex;
             gap: 48px;
             justify-content: center;
             margin-top: 72px;
             padding-top: 48px;
-            border-top: 1px solid rgba(255,255,255,0.08);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
         }
-        .stat h3 { font-family: 'Cormorant Garamond', serif; font-size: 36px; font-weight: 700; color: var(--gold); }
-        .stat p { font-size: 13px; color: rgba(255,255,255,0.4); margin-top: 4px; }
-        .divider { width: 1px; height: 40px; background: rgba(201,168,76,0.2); }
+
+        .stat h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        .stat p {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 4px;
+        }
+
+        .divider {
+            width: 1px;
+            height: 40px;
+            background: rgba(201, 168, 76, 0.2);
+        }
 
         /* SECTIONS */
-        section { padding: 100px 60px; }
-        .section-label { font-size: 11px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; }
-        .section-title { font-family: 'Cormorant Garamond', serif; font-size: 44px; font-weight: 600; color: var(--navy); line-height: 1.2; margin-bottom: 20px; }
-        .section-title em { font-style: italic; color: var(--gold); }
-        .section-desc { font-size: 16px; color: var(--gray); line-height: 1.7; max-width: 480px; font-weight: 300; }
+        section {
+            padding: 100px 60px;
+        }
+
+        .section-label {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 44px;
+            font-weight: 600;
+            color: var(--navy);
+            line-height: 1.2;
+            margin-bottom: 20px;
+        }
+
+        .section-title em {
+            font-style: italic;
+            color: var(--gold);
+        }
+
+        .section-desc {
+            font-size: 16px;
+            color: var(--gray);
+            line-height: 1.7;
+            max-width: 480px;
+            font-weight: 300;
+        }
 
         /* HOW IT WORKS */
-        .how { background: var(--cream); }
-        .how-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
-        .steps { display: flex; flex-direction: column; gap: 32px; margin-top: 40px; }
-        .step { display: flex; gap: 20px; align-items: flex-start; }
-        .step-num { width: 40px; height: 40px; border-radius: 50%; background: var(--navy); color: var(--gold); font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        .step-content h4 { font-size: 16px; font-weight: 600; color: var(--navy); margin-bottom: 6px; }
-        .step-content p { font-size: 14px; color: var(--gray); line-height: 1.6; }
+        .how {
+            background: var(--cream);
+        }
 
-        .mockup { background: var(--navy); border-radius: 16px; overflow: hidden; box-shadow: 0 32px 80px rgba(15,31,61,0.3); }
-        .mockup-bar { background: rgba(255,255,255,0.05); padding: 12px 16px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid rgba(255,255,255,0.06); }
-        .dot { width: 10px; height: 10px; border-radius: 50%; }
-        .mockup-body { padding: 24px; }
-        .mock-msg { margin-bottom: 16px; display: flex; gap: 10px; }
-        .mock-msg.user { flex-direction: row-reverse; }
-        .mock-av { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; }
-        .mock-msg.ai .mock-av { background: rgba(201,168,76,0.2); border: 1px solid rgba(201,168,76,0.3); }
-        .mock-msg.user .mock-av { background: var(--gold); color: var(--navy); font-weight: 700; }
-        .mock-bubble { padding: 10px 14px; border-radius: 10px; font-size: 12px; line-height: 1.6; max-width: 75%; }
-        .mock-msg.ai .mock-bubble { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.85); border-top-left-radius: 2px; }
-        .mock-msg.user .mock-bubble { background: rgba(201,168,76,0.15); color: var(--gold-light); border-top-right-radius: 2px; }
-        .mock-pasal { background: rgba(201,168,76,0.08); border: 1px solid rgba(201,168,76,0.2); border-radius: 8px; padding: 10px 12px; margin-top: 8px; font-size: 11px; color: rgba(255,255,255,0.5); }
-        .mock-pasal span { color: var(--gold); font-weight: 600; }
+        .how-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+        }
+
+        .steps {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+            margin-top: 40px;
+        }
+
+        .step {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .step-num {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--navy);
+            color: var(--gold);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .step-content h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--navy);
+            margin-bottom: 6px;
+        }
+
+        .step-content p {
+            font-size: 14px;
+            color: var(--gray);
+            line-height: 1.6;
+        }
+
+        .mockup {
+            background: var(--navy);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 32px 80px rgba(15, 31, 61, 0.3);
+        }
+
+        .mockup-bar {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .mockup-body {
+            padding: 24px;
+        }
+
+        .mock-msg {
+            margin-bottom: 16px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .mock-msg.user {
+            flex-direction: row-reverse;
+        }
+
+        .mock-av {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+
+        .mock-msg.ai .mock-av {
+            background: rgba(201, 168, 76, 0.2);
+            border: 1px solid rgba(201, 168, 76, 0.3);
+        }
+
+        .mock-msg.user .mock-av {
+            background: var(--gold);
+            color: var(--navy);
+            font-weight: 700;
+        }
+
+        .mock-bubble {
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 12px;
+            line-height: 1.6;
+            max-width: 75%;
+        }
+
+        .mock-msg.ai .mock-bubble {
+            background: rgba(255, 255, 255, 0.06);
+            color: rgba(255, 255, 255, 0.85);
+            border-top-left-radius: 2px;
+        }
+
+        .mock-msg.user .mock-bubble {
+            background: rgba(201, 168, 76, 0.15);
+            color: var(--gold-light);
+            border-top-right-radius: 2px;
+        }
+
+        .mock-pasal {
+            background: rgba(201, 168, 76, 0.08);
+            border: 1px solid rgba(201, 168, 76, 0.2);
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin-top: 8px;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .mock-pasal span {
+            color: var(--gold);
+            font-weight: 600;
+        }
 
         /* FEATURES */
-        .features { background: var(--white); }
-        .features-inner { max-width: 1100px; margin: 0 auto; text-align: center; }
-        .features-inner .section-desc { margin: 0 auto 60px; }
-        .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; text-align: left; }
-        .feature-card { background: var(--cream); border: 1px solid var(--border); border-radius: 14px; padding: 28px; transition: all 0.3s; }
-        .feature-card:hover { border-color: rgba(201,168,76,0.4); box-shadow: 0 8px 32px rgba(201,168,76,0.1); transform: translateY(-2px); }
-        .feature-icon { width: 48px; height: 48px; background: var(--navy); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 20px; }
-        .feature-icon.indonesia { background: linear-gradient(180deg, #CC0001 50%, #ffffff 50%); font-size: 26px; }
-        .feature-card h3 { font-size: 17px; font-weight: 600; color: var(--navy); margin-bottom: 10px; }
-        .feature-card p { font-size: 14px; color: var(--gray); line-height: 1.6; }
+        .features {
+            background: var(--white);
+        }
+
+        .features-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .features-inner .section-desc {
+            margin: 0 auto 60px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            text-align: left;
+        }
+
+        .feature-card {
+            background: var(--cream);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 28px;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            border-color: rgba(201, 168, 76, 0.4);
+            box-shadow: 0 8px 32px rgba(201, 168, 76, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--navy);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+
+        .feature-icon.indonesia {
+            background: linear-gradient(180deg, #CC0001 50%, #ffffff 50%);
+            font-size: 26px;
+        }
+
+        .feature-card h3 {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--navy);
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--gray);
+            line-height: 1.6;
+        }
 
         /* CTA */
-        .cta-section { background: var(--navy); text-align: center; padding: 100px 60px; }
-        .cta-section .section-title { color: var(--white); max-width: 600px; margin: 0 auto 20px; }
-        .cta-section .section-desc { color: rgba(255,255,255,0.5); margin: 0 auto 16px; }
-        .cta-note { font-size: 13px; color: rgba(255,255,255,0.3); margin-bottom: 36px; }
-        .cta-note span { color: var(--gold); }
+        .cta-section {
+            background: var(--navy);
+            text-align: center;
+            padding: 100px 60px;
+        }
+
+        .cta-section .section-title {
+            color: var(--white);
+            max-width: 600px;
+            margin: 0 auto 20px;
+        }
+
+        .cta-section .section-desc {
+            color: rgba(255, 255, 255, 0.5);
+            margin: 0 auto 16px;
+        }
+
+        .cta-note {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.3);
+            margin-bottom: 36px;
+        }
+
+        .cta-note span {
+            color: var(--gold);
+        }
 
         /* FOOTER */
-        footer { background: #080f1e; padding: 40px 60px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.05); }
-        .footer-logo { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 600; font-style: italic; color: var(--gold); letter-spacing: 1px; }
-        footer p { font-size: 12px; color: rgba(255,255,255,0.25); }
+        footer {
+            background: #080f1e;
+            padding: 40px 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .footer-logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 24px;
+            font-weight: 600;
+            font-style: italic;
+            color: var(--gold);
+            letter-spacing: 1px;
+        }
+
+        footer p {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.25);
+        }
     </style>
 </head>
+
 <body>
 
-<!-- NAVBAR -->
-<nav>
-    <a href="#" class="logo-text">Legatia</a>
-    <div class="nav-cta">
-        <a href="/chat" class="btn btn-outline">Masuk</a>
-        <a href="#daftar" class="btn btn-gold">Daftar Gratis</a>
-    </div>
-</nav>
-
-<!-- HERO -->
-<section class="hero">
-    <div>
-        <div class="hero-badge">⚡ Beta Version</div>
-        <h1>Hukum Indonesia,<br><em>Mudah Dipahami</em></h1>
-        <p>Tanyakan pertanyaan hukum apapun dan dapatkan jawaban akurat dengan referensi pasal yang tepat — dalam hitungan detik.</p>
-        <div class="hero-cta">
-            <a href="#daftar" class="btn btn-gold btn-lg">Mulai Konsultasi Gratis →</a>
+    <!-- NAVBAR -->
+    <nav>
+        <a href="#" class="logo-text">Legatia</a>
+        <div class="nav-cta">
+            <a href="/login" class="btn btn-outline">Masuk</a>
+            <a href="/register" class="btn btn-gold">Daftar Gratis</a>
         </div>
-        <div class="hero-stats">
-            <div class="stat"><h3>30.000+</h3><p>Peraturan tersedia</p></div>
-            <div class="divider"></div>
-            <div class="stat"><h3>&lt; 30 dtk</h3><p>Waktu respons</p></div>
-            <div class="divider"></div>
-            <div class="stat"><h3>100%</h3><p>Berbasis hukum Indonesia</p></div>
-        </div>
-    </div>
-</section>
+    </nav>
 
-<!-- HOW IT WORKS -->
-<section class="how">
-    <div class="how-inner">
+    <!-- HERO -->
+    <section class="hero">
         <div>
-            <div class="section-label">Cara Kerja</div>
-            <div class="section-title">Jawaban hukum<br>dalam <em>3 langkah</em></div>
-            <div class="steps">
-                <div class="step">
-                    <div class="step-num">1</div>
-                    <div class="step-content">
-                        <h4>Ajukan pertanyaan Anda</h4>
-                        <p>Ketik pertanyaan hukum dengan bahasa sehari-hari — tidak perlu pakai istilah hukum yang rumit.</p>
-                    </div>
+            <div class="hero-badge">⚡ Beta Version</div>
+            <h1>Hukum Indonesia,<br><em>Mudah Dipahami</em></h1>
+            <p>Tanyakan pertanyaan hukum apapun dan dapatkan jawaban akurat dengan referensi pasal yang tepat — dalam
+                hitungan detik.</p>
+            <div class="hero-cta">
+                <a href="/register" class="btn btn-gold btn-lg">Mulai Konsultasi Gratis →</a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat">
+                    <h3>30.000+</h3>
+                    <p>Peraturan tersedia</p>
                 </div>
-                <div class="step">
-                    <div class="step-num">2</div>
-                    <div class="step-content">
-                        <h4>AI mencari pasal yang relevan</h4>
-                        <p>Legatia secara otomatis menelusuri ribuan peraturan untuk menemukan pasal yang paling sesuai.</p>
-                    </div>
+                <div class="divider"></div>
+                <div class="stat">
+                    <h3>&lt; 30 dtk</h3>
+                    <p>Waktu respons</p>
                 </div>
-                <div class="step">
-                    <div class="step-num">3</div>
-                    <div class="step-content">
-                        <h4>Terima jawaban dengan referensi</h4>
-                        <p>Dapatkan penjelasan yang mudah dipahami, lengkap dengan nomor pasal dan undang-undang yang relevan.</p>
-                    </div>
+                <div class="divider"></div>
+                <div class="stat">
+                    <h3>100%</h3>
+                    <p>Berbasis hukum Indonesia</p>
                 </div>
             </div>
         </div>
+    </section>
 
-        <div class="mockup">
-            <div class="mockup-bar">
-                <div class="dot" style="background:#ff5f57"></div>
-                <div class="dot" style="background:#febc2e"></div>
-                <div class="dot" style="background:#28c840"></div>
-            </div>
-            <div class="mockup-body">
-                <div class="mock-msg user">
-                    <div class="mock-av">A</div>
-                    <div class="mock-bubble">Apakah saya berhak pesangon jika resign?</div>
+    <!-- HOW IT WORKS -->
+    <section class="how">
+        <div class="how-inner">
+            <div>
+                <div class="section-label">Cara Kerja</div>
+                <div class="section-title">Jawaban hukum<br>dalam <em>3 langkah</em></div>
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-num">1</div>
+                        <div class="step-content">
+                            <h4>Ajukan pertanyaan Anda</h4>
+                            <p>Ketik pertanyaan hukum dengan bahasa sehari-hari — tidak perlu pakai istilah hukum yang
+                                rumit.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-num">2</div>
+                        <div class="step-content">
+                            <h4>AI mencari pasal yang relevan</h4>
+                            <p>Legatia secara otomatis menelusuri ribuan peraturan untuk menemukan pasal yang paling
+                                sesuai.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-num">3</div>
+                        <div class="step-content">
+                            <h4>Terima jawaban dengan referensi</h4>
+                            <p>Dapatkan penjelasan yang mudah dipahami, lengkap dengan nomor pasal dan undang-undang
+                                yang relevan.</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="mock-msg ai">
-                    <div class="mock-av">⚖️</div>
-                    <div>
-                        <div class="mock-bubble">
-                            Jika Anda mengundurkan diri secara sukarela, Anda tidak berhak atas pesangon. Namun, Anda tetap berhak atas uang penggantian hak seperti sisa cuti tahunan.
-                            <div class="mock-pasal">
-                                <span>📌 UU No.13/2003 Pasal 162</span><br>
-                                Pekerja yang mengundurkan diri atas kemauan sendiri tidak berhak mendapatkan uang pesangon...
+            </div>
+
+            <div class="mockup">
+                <div class="mockup-bar">
+                    <div class="dot" style="background:#ff5f57"></div>
+                    <div class="dot" style="background:#febc2e"></div>
+                    <div class="dot" style="background:#28c840"></div>
+                </div>
+                <div class="mockup-body">
+                    <div class="mock-msg user">
+                        <div class="mock-av">A</div>
+                        <div class="mock-bubble">Apakah saya berhak pesangon jika resign?</div>
+                    </div>
+                    <div class="mock-msg ai">
+                        <div class="mock-av">⚖️</div>
+                        <div>
+                            <div class="mock-bubble">
+                                Jika Anda mengundurkan diri secara sukarela, Anda tidak berhak atas pesangon. Namun,
+                                Anda tetap berhak atas uang penggantian hak seperti sisa cuti tahunan.
+                                <div class="mock-pasal">
+                                    <span>📌 UU No.13/2003 Pasal 162</span><br>
+                                    Pekerja yang mengundurkan diri atas kemauan sendiri tidak berhak mendapatkan uang
+                                    pesangon...
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- FEATURES -->
-<section class="features">
-    <div class="features-inner">
-        <div class="section-label">Keunggulan</div>
-        <div class="section-title">Mengapa memilih <em>Legatia?</em></div>
-        <p class="section-desc">Dirancang khusus untuk hukum Indonesia, dengan sumber data terpercaya dan teknologi AI terkini.</p>
-        <div class="feature-grid">
-            <div class="feature-card">
-                <div class="feature-icon">📚</div>
-                <h3>Database Hukum Lengkap</h3>
-                <p>Lebih dari 30.000 peraturan dari UU, PP, Perpres, hingga Perda — selalu diperbarui secara berkala.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">🎯</div>
-                <h3>Referensi Pasal Akurat</h3>
-                <p>Setiap jawaban dilengkapi referensi nomor pasal dan undang-undang yang spesifik, sehingga dapat diverifikasi.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">💬</div>
-                <h3>Bahasa yang Mudah Dipahami</h3>
-                <p>Tidak perlu paham istilah hukum. Legatia menjelaskan dengan bahasa Indonesia yang sederhana dan jelas.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">⚡</div>
-                <h3>Respons Cepat</h3>
-                <p>Dapatkan jawaban dalam hitungan detik. Tidak perlu antri atau menunggu jadwal konsultasi.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">🔒</div>
-                <h3>Privasi Terjaga</h3>
-                <p>Pertanyaan Anda tidak disimpan atau dibagikan. Konsultasi berjalan dengan aman dan rahasia.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon indonesia">🇮🇩</div>
-                <h3>Khusus Hukum Indonesia</h3>
-                <p>Fokus 100% pada hukum Indonesia. Dirancang untuk konteks hukum nasional, bukan platform umum.</p>
+    <!-- FEATURES -->
+    <section class="features">
+        <div class="features-inner">
+            <div class="section-label">Keunggulan</div>
+            <div class="section-title">Mengapa memilih <em>Legatia?</em></div>
+            <p class="section-desc">Dirancang khusus untuk hukum Indonesia, dengan sumber data terpercaya dan teknologi
+                AI terkini.</p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📚</div>
+                    <h3>Database Hukum Lengkap</h3>
+                    <p>Lebih dari 30.000 peraturan dari UU, PP, Perpres, hingga Perda — selalu diperbarui secara
+                        berkala.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Referensi Pasal Akurat</h3>
+                    <p>Setiap jawaban dilengkapi referensi nomor pasal dan undang-undang yang spesifik, sehingga dapat
+                        diverifikasi.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💬</div>
+                    <h3>Bahasa yang Mudah Dipahami</h3>
+                    <p>Tidak perlu paham istilah hukum. Legatia menjelaskan dengan bahasa Indonesia yang sederhana dan
+                        jelas.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Respons Cepat</h3>
+                    <p>Dapatkan jawaban dalam hitungan detik. Tidak perlu antri atau menunggu jadwal konsultasi.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Privasi Terjaga</h3>
+                    <p>Pertanyaan Anda tidak disimpan atau dibagikan. Konsultasi berjalan dengan aman dan rahasia.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon indonesia">🇮🇩</div>
+                    <h3>Khusus Hukum Indonesia</h3>
+                    <p>Fokus 100% pada hukum Indonesia. Dirancang untuk konteks hukum nasional, bukan platform umum.</p>
+                </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- CTA -->
-<section class="cta-section" id="daftar">
-    <div class="section-label" style="color:var(--gold)">Mulai Sekarang</div>
-    <div class="section-title">Siap memahami hukum<br><em>dengan lebih mudah?</em></div>
-    <p class="section-desc">Daftar sekarang dan mulai konsultasi hukum pertama Anda.</p>
-    <p class="cta-note">✦ Pendaftaran <span>100% gratis</span> — tidak perlu kartu kredit</p>
-    <div style="display:flex; gap:14px; justify-content:center; flex-wrap:wrap;">
-        <a href="/chat" class="btn btn-gold btn-lg">Daftar & Mulai Gratis →</a>
-        <a href="/chat" class="btn btn-outline btn-lg">Sudah punya akun? Masuk</a>
-    </div>
-</section>
+    <!-- CTA -->
+    <section class="cta-section" id="daftar">
+        <div class="section-label" style="color:var(--gold)">Mulai Sekarang</div>
+        <div class="section-title">Siap memahami hukum<br><em>dengan lebih mudah?</em></div>
+        <p class="section-desc">Daftar sekarang dan mulai konsultasi hukum pertama Anda.</p>
+        <p class="cta-note">✦ Pendaftaran <span>100% gratis</span> — tidak perlu kartu kredit</p>
+        <div style="display:flex; gap:14px; justify-content:center; flex-wrap:wrap;">
+            <a href="/register" class="btn btn-gold btn-lg">Daftar & Mulai Gratis →</a>
+            <a href="/login" class="btn btn-outline btn-lg">Sudah punya akun? Masuk</a>
+        </div>
+    </section>
 
-<!-- FOOTER -->
-<footer>
-    <div class="footer-logo">Legatia</div>
-    <p>© 2026 Legatia. Bukan pengganti nasihat hukum resmi.</p>
-</footer>
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-logo">Legatia</div>
+        <p>© 2026 Legatia. Bukan pengganti nasihat hukum resmi.</p>
+    </footer>
 
 </body>
+
 </html>

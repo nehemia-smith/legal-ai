@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Daftar — Legatia</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0d0f14;
+            --card: #13161e;
+            --border: #1f2433;
+            --gold: #c9a84c;
+            --gold-dim: #8a6f30;
+            --text: #e8e4d9;
+            --muted: #5a6070;
+            --error: #e05c5c;
+            --success: #4caf82;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(201, 168, 76, .03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(201, 168, 76, .03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2.5rem 2rem;
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: var(--gold);
+            letter-spacing: .04em;
+        }
+
+        .logo-sub {
+            font-size: .75rem;
+            color: var(--muted);
+            letter-spacing: .15em;
+            text-transform: uppercase;
+            margin-top: .2rem;
+        }
+
+        h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: .4rem;
+        }
+
+        .subtitle {
+            color: var(--muted);
+            font-size: .85rem;
+            margin-bottom: 1.8rem;
+        }
+
+        .btn-google {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: .7rem;
+            width: 100%;
+            padding: .75rem 1rem;
+            background: #fff;
+            color: #1f1f1f;
+            border: none;
+            border-radius: 8px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: .9rem;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            transition: opacity .2s;
+            margin-bottom: 1.2rem;
+        }
+
+        .btn-google:hover {
+            opacity: .9;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: .8rem;
+            margin-bottom: 1.2rem;
+            color: var(--muted);
+            font-size: .78rem;
+            letter-spacing: .08em;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        label {
+            display: block;
+            font-size: .8rem;
+            color: var(--muted);
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            margin-bottom: .4rem;
+        }
+
+        input {
+            width: 100%;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: .7rem .9rem;
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: .9rem;
+            outline: none;
+            margin-bottom: 1rem;
+            transition: border-color .2s;
+        }
+
+        input:focus {
+            border-color: var(--gold-dim);
+        }
+
+        /* Password strength */
+        .strength-bar {
+            height: 3px;
+            background: var(--border);
+            border-radius: 2px;
+            margin: -.6rem 0 1rem;
+            overflow: hidden;
+        }
+
+        .strength-fill {
+            height: 100%;
+            width: 0;
+            border-radius: 2px;
+            transition: width .3s, background .3s;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: .78rem;
+            background: var(--gold);
+            color: #0d0f14;
+            border: none;
+            border-radius: 8px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: .9rem;
+            font-weight: 600;
+            cursor: pointer;
+            letter-spacing: .03em;
+            transition: opacity .2s, transform .1s;
+            margin-top: .3rem;
+        }
+
+        .btn-primary:hover {
+            opacity: .88;
+        }
+
+        .btn-primary:active {
+            transform: scale(.99);
+        }
+
+        .btn-primary:disabled {
+            opacity: .5;
+            cursor: not-allowed;
+        }
+
+        .alert {
+            padding: .65rem .9rem;
+            border-radius: 7px;
+            font-size: .83rem;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .alert.error {
+            background: rgba(224, 92, 92, .12);
+            border: 1px solid rgba(224, 92, 92, .3);
+            color: var(--error);
+        }
+
+        .alert.success {
+            background: rgba(76, 175, 130, .12);
+            border: 1px solid rgba(76, 175, 130, .3);
+            color: var(--success);
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .terms {
+            font-size: .78rem;
+            color: var(--muted);
+            text-align: center;
+            margin-top: .8rem;
+        }
+
+        .footer-link {
+            text-align: center;
+            margin-top: 1.4rem;
+            font-size: .84rem;
+            color: var(--muted);
+        }
+
+        .footer-link a {
+            color: var(--gold);
+            text-decoration: none;
+        }
+
+        .footer-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <div class="logo">
+            <div class="logo-text">⚖ Legatia</div>
+            <div class="logo-sub">Asisten Hukum Indonesia</div>
+        </div>
+
+        <h2>Buat Akun</h2>
+        <p class="subtitle">Gratis selamanya. Tidak perlu kartu kredit.</p>
+
+        <div class="alert error" id="alert"></div>
+
+        <!-- Google Register -->
+        <a href="/auth/google" class="btn-google">
+            <svg width="18" height="18" viewBox="0 0 48 48">
+                <path fill="#EA4335"
+                    d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
+                <path fill="#4285F4"
+                    d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" />
+                <path fill="#FBBC05"
+                    d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z" />
+                <path fill="#34A853"
+                    d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" />
+            </svg>
+            Daftar dengan Google
+        </a>
+
+        <div class="divider">atau daftar dengan email</div>
+
+        <form id="registerForm" onsubmit="handleRegister(event)">
+            <label>Nama Lengkap</label>
+            <input type="text" id="name" placeholder="Nama Anda" required autocomplete="name" />
+
+            <label>Email</label>
+            <input type="email" id="email" placeholder="nama@email.com" required autocomplete="email" />
+
+            <label>Password</label>
+            <input type="password" id="password" placeholder="Minimal 6 karakter" required autocomplete="new-password"
+                oninput="checkStrength(this.value)" />
+            <div class="strength-bar">
+                <div class="strength-fill" id="strengthFill"></div>
+            </div>
+
+            <label>Konfirmasi Password</label>
+            <input type="password" id="passwordConfirm" placeholder="Ulangi password" required />
+
+            <button class="btn-primary" type="submit" id="submitBtn">Buat Akun</button>
+        </form>
+
+        <p class="terms">Dengan mendaftar, Anda menyetujui syarat penggunaan layanan ini.</p>
+
+        <div class="footer-link">
+            Sudah punya akun? <a href="/login">Masuk di sini</a>
+        </div>
+    </div>
+
+    <script>
+        function showAlert(msg, type = "error") {
+            const el = document.getElementById("alert");
+            el.textContent = msg;
+            el.className = `alert ${type} show`;
+        }
+
+        function checkStrength(pw) {
+            const fill = document.getElementById("strengthFill");
+            let score = 0;
+            if (pw.length >= 6) score++;
+            if (pw.length >= 10) score++;
+            if (/[A-Z]/.test(pw)) score++;
+            if (/[0-9!@#$%]/.test(pw)) score++;
+            const colors = ["#e05c5c", "#e09a4c", "#c9a84c", "#4caf82"];
+            fill.style.width = (score * 25) + "%";
+            fill.style.background = colors[score - 1] || "transparent";
+        }
+
+        async function handleRegister(e) {
+            e.preventDefault();
+            const password = document.getElementById("password").value;
+            const confirm = document.getElementById("passwordConfirm").value;
+
+            if (password !== confirm) return showAlert("Password tidak cocok.");
+            if (password.length < 6) return showAlert("Password minimal 6 karakter.");
+
+            const btn = document.getElementById("submitBtn");
+            btn.disabled = true;
+            btn.textContent = "Mendaftar...";
+
+            const res = await fetch("/auth/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name: document.getElementById("name").value,
+                    email: document.getElementById("email").value,
+                    password: password,
+                })
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                showAlert("Akun berhasil dibuat! Mengalihkan...", "success");
+                setTimeout(() => window.location.href = data.redirect, 900);
+            } else {
+                showAlert(data.error || "Pendaftaran gagal.");
+                btn.disabled = false;
+                btn.textContent = "Buat Akun";
+            }
+        }
+    </script>
+</body>
+
+</html>
