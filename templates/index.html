@@ -46,7 +46,7 @@
             flex-direction: column;
         }
 
-        /* ===================== TOPBAR ===================== */
+        /* TOPBAR */
         .topbar {
             height: 58px;
             background: var(--navy-2);
@@ -130,6 +130,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            border-radius: 50%;
         }
 
         .user-name {
@@ -163,14 +164,14 @@
             color: var(--danger);
         }
 
-        /* ===================== LAYOUT ===================== */
+        /* LAYOUT */
         .layout {
             display: flex;
             flex: 1;
             overflow: hidden;
         }
 
-        /* ===================== SIDEBAR ===================== */
+        /* SIDEBAR */
         .sidebar {
             width: 260px;
             background: var(--navy-2);
@@ -315,7 +316,7 @@
             line-height: 1.6;
         }
 
-        /* ===================== CHAT AREA ===================== */
+        /* CHAT AREA */
         .chat-wrap {
             flex: 1;
             display: flex;
@@ -346,7 +347,7 @@
             padding: 0 24px;
         }
 
-        /* ===================== WELCOME ===================== */
+        /* WELCOME */
         .welcome {
             text-align: center;
             padding: 60px 0 40px;
@@ -419,7 +420,7 @@
             opacity: .85;
         }
 
-        /* ===================== MESSAGES ===================== */
+        /* MESSAGES */
         .message {
             display: flex;
             gap: 12px;
@@ -511,7 +512,6 @@
             text-align: right;
         }
 
-        /* Loading dots */
         .loading-dots {
             display: flex;
             gap: 4px;
@@ -549,7 +549,6 @@
             }
         }
 
-        /* ===================== DATE DIVIDER ===================== */
         .date-divider {
             display: flex;
             align-items: center;
@@ -568,7 +567,7 @@
             background: var(--border);
         }
 
-        /* ===================== INPUT AREA ===================== */
+        /* INPUT */
         .input-area {
             padding: 12px 24px 18px;
             flex-shrink: 0;
@@ -654,7 +653,6 @@
             opacity: .7;
         }
 
-        /* ===================== SCROLL TO BOTTOM ===================== */
         .scroll-btn {
             position: absolute;
             bottom: 90px;
@@ -689,10 +687,9 @@
 
 <body>
 
-    <!-- TOPBAR -->
     <div class="topbar">
         <div class="topbar-left">
-            <div class="sidebar-toggle" onclick="toggleSidebar()" title="Toggle sidebar">
+            <div class="sidebar-toggle" onclick="toggleSidebar()">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <line x1="3" y1="6" x2="21" y2="6" />
                     <line x1="3" y1="12" x2="21" y2="12" />
@@ -701,17 +698,16 @@
             </div>
             <a href="/" class="brand">Legatia</a>
         </div>
-
         <div class="topbar-right">
             <div class="user-pill">
-                <div class="user-avatar" id="topUserAvatar">
+                <div class="user-avatar">
                     {% if user.avatar %}
                     <img src="{{ user.avatar }}" alt="{{ user.name }}" onerror="this.style.display='none'" />
                     {% else %}
                     {{ user.name[0].upper() if user.name else 'U' }}
                     {% endif %}
                 </div>
-                <span class="user-name" id="topUserName">{{ user.name or user.email }}</span>
+                <span class="user-name">{{ user.name or user.email }}</span>
             </div>
             <a href="/logout" class="btn-logout">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -724,10 +720,7 @@
         </div>
     </div>
 
-    <!-- LAYOUT -->
     <div class="layout">
-
-        <!-- SIDEBAR -->
         <div class="sidebar" id="sidebar">
             <div class="sidebar-inner">
                 <button class="new-chat-btn" onclick="newChat()">
@@ -738,15 +731,13 @@
                     </svg>
                     Konsultasi Baru
                 </button>
-
                 <div class="history-label">Riwayat</div>
                 <div class="history-list" id="historyList">
-                    <div class="history-empty">Belum ada riwayat.<br>Mulai konsultasi pertamamu!</div>
+                    <div class="history-empty">Memuat riwayat...</div>
                 </div>
             </div>
         </div>
 
-        <!-- CHAT -->
         <div class="chat-wrap">
             <div class="chat-messages" id="chatMessages" onscroll="handleScroll()">
                 <div class="chat-inner" id="chatInner">
@@ -777,9 +768,7 @@
                     </div>
                 </div>
             </div>
-
-            <button class="scroll-btn" id="scrollBtn" onclick="scrollToBottom()" title="Scroll ke bawah">↓</button>
-
+            <button class="scroll-btn" id="scrollBtn" onclick="scrollToBottom()">↓</button>
             <div class="input-area">
                 <div class="input-wrap">
                     <textarea id="input" placeholder="Tanyakan pertanyaan hukum Anda..." rows="1"
@@ -794,14 +783,10 @@
                     konsultasikan dengan lawyer.</p>
             </div>
         </div>
-
     </div>
 
     <script>
-        // =====================
-        // STATE
-        // =====================
-        let sessions = JSON.parse(localStorage.getItem('legatia_sessions') || '[]');
+        let sessions = [];
         let activeId = null;
         let isLoading = false;
         let sidebarOpen = true;
@@ -810,120 +795,104 @@
         const userAvatar = "{{ user.avatar or '' }}";
         const userInitial = (userName[0] || 'U').toUpperCase();
 
-        // =====================
-        // INIT
-        // =====================
-        document.addEventListener('DOMContentLoaded', () => {
-            renderHistory();
+        document.addEventListener('DOMContentLoaded', async () => {
+            await fetchHistory();
             document.getElementById('input').addEventListener('input', () => {
                 document.getElementById('sendBtn').disabled = !document.getElementById('input').value.trim();
             });
         });
 
-        // =====================
-        // SIDEBAR
-        // =====================
         function toggleSidebar() {
             sidebarOpen = !sidebarOpen;
             document.getElementById('sidebar').classList.toggle('collapsed', !sidebarOpen);
         }
 
-        // =====================
         // HISTORY
-        // =====================
+        async function fetchHistory() {
+            try {
+                const res = await fetch('/history');
+                const data = await res.json();
+                sessions = data.sessions || [];
+                renderHistory();
+            } catch (e) { console.error(e); }
+        }
+
         function renderHistory() {
             const list = document.getElementById('historyList');
             if (!sessions.length) {
                 list.innerHTML = '<div class="history-empty">Belum ada riwayat.<br>Mulai konsultasi pertamamu!</div>';
                 return;
             }
-            list.innerHTML = sessions.slice().reverse().map(s => `
+            list.innerHTML = sessions.map(s => `
       <div class="history-item ${s.id === activeId ? 'active' : ''}" onclick="loadSession('${s.id}')">
         <span class="history-icon">⚖️</span>
         <span class="history-text">${escHtml(s.title)}</span>
         <button class="history-del" onclick="deleteSession(event,'${s.id}')" title="Hapus">✕</button>
-      </div>
-    `).join('');
+      </div>`).join('');
         }
 
-        function saveSession(id, title, messages) {
-            const idx = sessions.findIndex(s => s.id === id);
-            if (idx >= 0) {
-                sessions[idx] = { id, title, messages, updatedAt: Date.now() };
-            } else {
-                sessions.push({ id, title, messages, updatedAt: Date.now() });
-            }
-            localStorage.setItem('legatia_sessions', JSON.stringify(sessions));
-            renderHistory();
+        async function saveSession(id, title, messages) {
+            try {
+                await fetch('/history/' + id, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, messages })
+                });
+                const idx = sessions.findIndex(s => s.id === id);
+                if (idx >= 0) sessions[idx] = { ...sessions[idx], title };
+                else sessions.unshift({ id, title, updated_at: new Date().toISOString() });
+                renderHistory();
+            } catch (e) { console.error(e); }
         }
 
-        function loadSession(id) {
-            const s = sessions.find(s => s.id === id);
-            if (!s) return;
-            activeId = id;
-            const inner = document.getElementById('chatInner');
-            const welcome = document.getElementById('welcome');
-            if (welcome) welcome.remove();
-            inner.innerHTML = '';
-
-            // Render date divider
-            const date = new Date(s.updatedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-            inner.innerHTML += `<div class="date-divider">${date}</div>`;
-
-            s.messages.forEach(m => {
-                inner.innerHTML += buildBubble(m.role, m.text, m.time);
-            });
-            renderHistory();
-            scrollToBottom();
+        async function loadSession(id) {
+            try {
+                const res = await fetch('/history/' + id);
+                const data = await res.json();
+                const s = data.session;
+                if (!s) return;
+                activeId = id;
+                const inner = document.getElementById('chatInner');
+                const welcome = document.getElementById('welcome');
+                if (welcome) welcome.remove();
+                inner.innerHTML = '';
+                const date = new Date(s.updated_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+                inner.innerHTML += `<div class="date-divider">${date}</div>`;
+                (s.messages || []).forEach(m => { inner.innerHTML += buildBubble(m.role, m.text, m.time); });
+                renderHistory();
+                scrollToBottom();
+            } catch (e) { console.error(e); }
         }
 
-        function deleteSession(e, id) {
+        async function deleteSession(e, id) {
             e.stopPropagation();
-            sessions = sessions.filter(s => s.id !== id);
-            localStorage.setItem('legatia_sessions', JSON.stringify(sessions));
-            if (activeId === id) newChat();
-            else renderHistory();
+            try {
+                await fetch('/history/' + id, { method: 'DELETE' });
+                sessions = sessions.filter(s => s.id !== id);
+                if (activeId === id) newChat();
+                else renderHistory();
+            } catch (e) { console.error(e); }
         }
 
-        // =====================
-        // NEW CHAT
-        // =====================
         function newChat() {
             activeId = null;
-            const inner = document.getElementById('chatInner');
-            inner.innerHTML = `
+            document.getElementById('chatInner').innerHTML = `
       <div class="welcome" id="welcome">
         <span class="welcome-icon">⚖️</span>
         <h2>Halo, <em>${escHtml(userName.split(' ')[0])}</em>!</h2>
         <p>Tanyakan pertanyaan hukum Anda. Saya akan menjawab berdasarkan peraturan perundang-undangan Indonesia.</p>
         <div class="suggestion-grid">
-          <button class="suggestion" onclick="useSuggestion(this)">
-            <span class="suggestion-icon">👷</span>
-            <span class="suggestion-text">Apa hak saya jika di-PHK tanpa pesangon?</span>
-          </button>
-          <button class="suggestion" onclick="useSuggestion(this)">
-            <span class="suggestion-icon">📋</span>
-            <span class="suggestion-text">Berapa lama maksimal kontrak kerja PKWT?</span>
-          </button>
-          <button class="suggestion" onclick="useSuggestion(this)">
-            <span class="suggestion-icon">🏠</span>
-            <span class="suggestion-text">Bagaimana prosedur hukum sengketa tanah?</span>
-          </button>
-          <button class="suggestion" onclick="useSuggestion(this)">
-            <span class="suggestion-icon">💼</span>
-            <span class="suggestion-text">Apa syarat mendirikan PT di Indonesia?</span>
-          </button>
+          <button class="suggestion" onclick="useSuggestion(this)"><span class="suggestion-icon">👷</span><span class="suggestion-text">Apa hak saya jika di-PHK tanpa pesangon?</span></button>
+          <button class="suggestion" onclick="useSuggestion(this)"><span class="suggestion-icon">📋</span><span class="suggestion-text">Berapa lama maksimal kontrak kerja PKWT?</span></button>
+          <button class="suggestion" onclick="useSuggestion(this)"><span class="suggestion-icon">🏠</span><span class="suggestion-text">Bagaimana prosedur hukum sengketa tanah?</span></button>
+          <button class="suggestion" onclick="useSuggestion(this)"><span class="suggestion-icon">💼</span><span class="suggestion-text">Apa syarat mendirikan PT di Indonesia?</span></button>
         </div>
       </div>`;
             renderHistory();
         }
 
-        // =====================
-        // CHAT LOGIC
-        // =====================
         function buildBubble(role, text, time) {
-            const isUser = role === 'user';
-            const avatarHtml = isUser
+            const avatarHtml = role === 'user'
                 ? (userAvatar ? `<img src="${userAvatar}" alt="avatar"/>` : userInitial)
                 : '⚖️';
             return `
@@ -931,7 +900,7 @@
         <div class="msg-avatar">${avatarHtml}</div>
         <div class="msg-content">
           <div class="msg-bubble">${escHtml(text)}</div>
-          <div class="msg-time">${time}</div>
+          <div class="msg-time">${time || ''}</div>
         </div>
       </div>`;
         }
@@ -941,40 +910,29 @@
             const btn = document.getElementById('sendBtn');
             const pertanyaan = input.value.trim();
             if (!pertanyaan || isLoading) return;
-
             isLoading = true;
             btn.disabled = true;
 
-            // Remove welcome if exists
             const welcome = document.getElementById('welcome');
             if (welcome) welcome.remove();
 
-            // Create session if new
             if (!activeId) {
                 activeId = 'sess_' + Date.now();
-                // Add date divider
-                document.getElementById('chatInner').innerHTML += `
-        <div class="date-divider">${new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</div>`;
+                document.getElementById('chatInner').innerHTML +=
+                    `<div class="date-divider">${new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</div>`;
             }
 
             const time = getTime();
-
-            // User bubble
             document.getElementById('chatInner').innerHTML += buildBubble('user', pertanyaan, time);
             input.value = '';
             input.style.height = 'auto';
             scrollToBottom();
 
-            // Loading bubble
             const loadId = 'load_' + Date.now();
             document.getElementById('chatInner').innerHTML += `
       <div class="message ai" id="${loadId}">
         <div class="msg-avatar">⚖️</div>
-        <div class="msg-content">
-          <div class="msg-bubble">
-            <div class="loading-dots"><span></span><span></span><span></span></div>
-          </div>
-        </div>
+        <div class="msg-content"><div class="msg-bubble"><div class="loading-dots"><span></span><span></span><span></span></div></div></div>
       </div>`;
             scrollToBottom();
 
@@ -987,18 +945,15 @@
                 const data = await res.json();
                 const jawaban = data.jawaban || 'Maaf, tidak ada jawaban.';
                 const aiTime = getTime();
-
                 document.getElementById(loadId)?.remove();
                 document.getElementById('chatInner').innerHTML += buildBubble('ai', jawaban, aiTime);
 
-                // Save to history
                 const s = sessions.find(s => s.id === activeId);
-                const msgs = s ? s.messages : [];
+                const msgs = s ? (await fetch('/history/' + activeId).then(r => r.json()).then(d => d.session?.messages || [])) : [];
                 msgs.push({ role: 'user', text: pertanyaan, time });
                 msgs.push({ role: 'ai', text: jawaban, time: aiTime });
                 const title = pertanyaan.length > 45 ? pertanyaan.slice(0, 45) + '…' : pertanyaan;
-                saveSession(activeId, title, msgs);
-
+                await saveSession(activeId, title, msgs);
             } catch (err) {
                 document.getElementById(loadId)?.remove();
                 document.getElementById('chatInner').innerHTML += buildBubble('ai', 'Maaf, terjadi kesalahan. Silakan coba lagi.', getTime());
@@ -1009,44 +964,22 @@
             scrollToBottom();
         }
 
-        // =====================
-        // UTILS
-        // =====================
         function useSuggestion(el) {
             document.getElementById('input').value = el.querySelector('.suggestion-text').textContent;
             document.getElementById('sendBtn').disabled = false;
             kirim();
         }
-
-        function handleKey(e) {
-            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); kirim(); }
-        }
-
-        function autoResize(el) {
-            el.style.height = 'auto';
-            el.style.height = Math.min(el.scrollHeight, 140) + 'px';
-        }
-
-        function getTime() {
-            return new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-        }
-
+        function handleKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); kirim(); } }
+        function autoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 140) + 'px'; }
+        function getTime() { return new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }); }
         function escHtml(str) {
-            return String(str)
-                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;').replace(/\n/g, '<br>');
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/\n/g, '<br>');
         }
-
-        function scrollToBottom() {
-            const el = document.getElementById('chatMessages');
-            setTimeout(() => { el.scrollTop = el.scrollHeight; }, 50);
-        }
-
+        function scrollToBottom() { const el = document.getElementById('chatMessages'); setTimeout(() => { el.scrollTop = el.scrollHeight; }, 50); }
         function handleScroll() {
             const el = document.getElementById('chatMessages');
             const btn = document.getElementById('scrollBtn');
-            const distFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
-            btn.classList.toggle('show', distFromBottom > 200);
+            btn.classList.toggle('show', el.scrollHeight - el.scrollTop - el.clientHeight > 200);
         }
     </script>
 </body>

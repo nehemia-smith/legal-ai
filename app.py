@@ -270,5 +270,75 @@ def tanya():
     jawaban = tanya_gemini(pertanyaan, pasal)
     return jsonify({"jawaban": jawaban})
 
+# =====================
+# ROUTES — HISTORY
+# =====================
+@app.route("/history", methods=["GET"])
+@login_required
+def get_history():
+    email = session["user"]["email"]
+    try:
+        result = supabase.table("chat_sessions") \
+            .select("id, title, updated_at") \
+            .eq("user_email", email) \
+            .order("updated_at", desc=True) \
+            .limit(50) \
+            .execute()
+        return jsonify({"sessions": result.data})
+    except Exception as e:
+        print(f"[History error] {e}")
+        return jsonify({"sessions": []})
+
+@app.route("/history/<session_id>", methods=["GET"])
+@login_required
+def get_session(session_id):
+    email = session["user"]["email"]
+    try:
+        result = supabase.table("chat_sessions") \
+            .select("*") \
+            .eq("id", session_id) \
+            .eq("user_email", email) \
+            .single() \
+            .execute()
+        return jsonify({"session": result.data})
+    except Exception as e:
+        print(f"[Get session error] {e}")
+        return jsonify({"session": None}), 404
+
+@app.route("/history/<session_id>", methods=["POST"])
+@login_required
+def save_session(session_id):
+    email = session["user"]["email"]
+    data  = request.get_json()
+    title    = data.get("title", "Konsultasi")
+    messages = data.get("messages", [])
+    try:
+        supabase.table("chat_sessions").upsert({
+            "id":         session_id,
+            "user_email": email,
+            "title":      title,
+            "messages":   messages,
+            "updated_at": "now()",
+        }, on_conflict="id").execute()
+        return jsonify({"success": True})
+    except Exception as e:
+        print(f"[Save session error] {e}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/history/<session_id>", methods=["DELETE"])
+@login_required
+def delete_session(session_id):
+    email = session["user"]["email"]
+    try:
+        supabase.table("chat_sessions") \
+            .delete() \
+            .eq("id", session_id) \
+            .eq("user_email", email) \
+            .execute()
+        return jsonify({"success": True})
+    except Exception as e:
+        print(f"[Delete session error] {e}")
+        return jsonify({"error": str(e)}), 500
+
 if __name__ == "__main__":
     app.run(debug=True)
