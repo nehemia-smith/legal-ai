@@ -4,3 +4,4 @@ requests
 supabase==2.10.0
 bcrypt
 gunicorn
+google-generativeai

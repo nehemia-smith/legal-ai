@@ -6,6 +6,7 @@ from urllib.parse import urlencode
 from dotenv import load_dotenv
 from functools import wraps
 from supabase import create_client, Client
+import google.generativeai as genai
 
 load_dotenv()
 
@@ -23,8 +24,10 @@ GOOGLE_CLIENT_SECRET= os.getenv("GOOGLE_CLIENT_SECRET", "").strip()
 GOOGLE_REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI", "http://localhost:5000/auth/google/callback").strip()
 
 PASAL_API_URL = "https://pasal.id/api/v1/search"
-# Gunakan endpoint v1beta flash yang paling toleran
-GEMINI_URL_TEMPLATE = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key="
+
+# Inisialisasi Gemini SDK
+if GEMINI_API_KEY:
+    genai.configure(api_key=GEMINI_API_KEY)
 
 GOOGLE_AUTH_URL  = "https://accounts.google.com/o/oauth2/v2/auth"
 GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token"
@@ -72,6 +75,9 @@ def cari_pasal(kata_kunci):
 # FUNGSI TANYA KE GEMINI
 # =====================
 def tanya_gemini(pertanyaan, konteks_pasal):
+    if not GEMINI_API_KEY:
+        return "Sistem AI belum dikonfigurasi (API Key kosong)."
+
     prompt = f"""Kamu adalah asisten hukum Indonesia yang membantu 
 masyarakat memahami hukum dengan bahasa yang mudah dimengerti.
 Selalu cantumkan referensi pasal yang relevan.
@@ -86,29 +92,22 @@ Pasal-pasal yang relevan dari database hukum Indonesia:
 Tolong jawab pertanyaan di atas berdasarkan pasal-pasal tersebut."""
 
     try:
-        url = f"{GEMINI_URL_TEMPLATE}{GEMINI_API_KEY}"
-        body = {"contents": [{"parts": [{"text": prompt}]}]}
+        model = genai.GenerativeModel("gemini-1.5-flash")
+        response = model.generate_content(prompt)
         
-        response = requests.post(url, json=body, timeout=30)
-        
-        # Log untuk debugging di Vercel jika masih error
-        if response.status_code != 200:
-            print(f"[Gemini Error Response] {response.status_code} - {response.text}")
+        if response and response.text:
+            return response.text
             
-        response.raise_for_status()
-        data = response.json()
-        
-        if "candidates" in data and len(data["candidates"]) > 0:
-            return data["candidates"][0]["content"]["parts"][0]["text"]
-        
-        # Handle safety filter or other reasons for no candidates
-        if "promptFeedback" in data:
-            return "Maaf, permintaan Anda tidak dapat diproses karena kebijakan keamanan AI. Cobalah bertanya dengan bahasa yang lebih netral."
-            
-        return "Maaf, asisten hukum sedang tidak dapat memberikan jawaban saat ini. Silakan coba pertanyaan lain."
+        return "Maaf, AI tidak memberikan jawaban. Silakan coba lagi."
     except Exception as e:
-        print(f"[Gemini error] {e}")
-        return f"Terjadi gangguan pada koneksi AI. (Detail: {str(e)[:50]}...)"
+        print(f"[Gemini SDK Error] {e}")
+        # Fallback ke model pro jika flash gagal
+        try:
+            model_pro = genai.GenerativeModel("gemini-pro")
+            response_pro = model_pro.generate_content(prompt)
+            return response_pro.text
+        except:
+            return f"Terjadi gangguan pada asisten AI. (Detail: {str(e)[:50]}...)"
 
 # =====================
 # HELPER SUPABASE USER
