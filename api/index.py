@@ -63,8 +63,9 @@ def cari_pasal(kata_kunci):
             hasil += f"\n📌 {item.get('title', '')}\n"
             hasil += f"{item.get('content', '')}\n"
         return hasil if hasil else "Tidak ditemukan pasal yang relevan."
-    except:
-        return "Tidak dapat mengakses database pasal saat ini."
+    except Exception as e:
+        print(f"[cari_pasal error] {e}")
+        return "Mohon maaf, saat ini asisten tidak dapat mengakses database pasal hukum. Silakan coba lagi nanti."
 
 # =====================
 # FUNGSI TANYA KE GEMINI
@@ -83,10 +84,23 @@ Pasal-pasal yang relevan dari database hukum Indonesia:
 
 Tolong jawab pertanyaan di atas berdasarkan pasal-pasal tersebut."""
 
-    body = {"contents": [{"parts": [{"text": prompt}]}]}
-    response = requests.post(GEMINI_URL, json=body)
-    data = response.json()
-    return data["candidates"][0]["content"]["parts"][0]["text"]
+    try:
+        body = {"contents": [{"parts": [{"text": prompt}]}]}
+        response = requests.post(GEMINI_URL, json=body, timeout=25)
+        response.raise_for_status()
+        data = response.json()
+        
+        if "candidates" in data and len(data["candidates"]) > 0:
+            return data["candidates"][0]["content"]["parts"][0]["text"]
+        
+        # Handle safety filter or other reasons for no candidates
+        if "promptFeedback" in data:
+            return "Maaf, permintaan Anda tidak dapat diproses karena kebijakan keamanan AI. Cobalah bertanya dengan bahasa yang lebih netral."
+            
+        return "Maaf, asisten hukum sedang tidak dapat memberikan jawaban saat ini. Silakan coba pertanyaan lain."
+    except Exception as e:
+        print(f"[Gemini error] {e}")
+        return f"Terjadi gangguan pada koneksi AI. (Detail: {str(e)[:50]}...)"
 
 # =====================
 # HELPER SUPABASE USER
