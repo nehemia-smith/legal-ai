@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, jsonify, redirect, url_for, s
 import requests
 import os
 import uuid
+from urllib.parse import urlencode
 from dotenv import load_dotenv
 from functools import wraps
 from supabase import create_client, Client
@@ -14,15 +15,15 @@ app.secret_key = os.getenv("SECRET_KEY", "dev-secret-change-this")
 # =====================
 # CONFIG
 # =====================
-GEMINI_API_KEY      = os.getenv("GEMINI_API_KEY")
-SUPABASE_URL        = os.getenv("SUPABASE_URL")
-SUPABASE_ANON_KEY   = os.getenv("SUPABASE_ANON_KEY")
-GOOGLE_CLIENT_ID    = os.getenv("GOOGLE_CLIENT_ID")
-GOOGLE_CLIENT_SECRET= os.getenv("GOOGLE_CLIENT_SECRET")
-GOOGLE_REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI", "http://localhost:5000/auth/google/callback")
+GEMINI_API_KEY      = os.getenv("GEMINI_API_KEY", "").strip()
+SUPABASE_URL        = os.getenv("SUPABASE_URL", "").strip()
+SUPABASE_ANON_KEY   = os.getenv("SUPABASE_ANON_KEY", "").strip()
+GOOGLE_CLIENT_ID    = os.getenv("GOOGLE_CLIENT_ID", "").strip()
+GOOGLE_CLIENT_SECRET= os.getenv("GOOGLE_CLIENT_SECRET", "").strip()
+GOOGLE_REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI", "http://localhost:5000/auth/google/callback").strip()
 
 PASAL_API_URL = "https://pasal.id/api/v1/search"
-GEMINI_URL    = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={GEMINI_API_KEY}"
+GEMINI_URL    = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
 
 GOOGLE_AUTH_URL  = "https://accounts.google.com/o/oauth2/v2/auth"
 GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token"
@@ -208,6 +209,9 @@ def auth_login():
 # =====================
 @app.route("/auth/google")
 def auth_google():
+    if not GOOGLE_CLIENT_ID or not GOOGLE_REDIRECT_URI:
+        return "GOOGLE_CLIENT_ID atau GOOGLE_REDIRECT_URI belum diset!", 500
+
     state = str(uuid.uuid4())
     session["oauth_state"] = state
 
@@ -220,7 +224,7 @@ def auth_google():
         "access_type":   "offline",
         "prompt":        "select_account",
     }
-    auth_url = GOOGLE_AUTH_URL + "?" + "&".join(f"{k}={v}" for k, v in params.items())
+    auth_url = f"{GOOGLE_AUTH_URL}?{urlencode(params)}"
     return redirect(auth_url)
 
 
