@@ -92,7 +92,8 @@ Pasal-pasal yang relevan dari database hukum Indonesia:
 Tolong jawab pertanyaan di atas berdasarkan pasal-pasal tersebut."""
 
     try:
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        # Paksa pakai gemini-pro yang paling stabil untuk ngetes koneksi
+        model = genai.GenerativeModel("gemini-pro")
         response = model.generate_content(prompt)
         
         if response and response.text:
@@ -101,11 +102,11 @@ Tolong jawab pertanyaan di atas berdasarkan pasal-pasal tersebut."""
         return "Maaf, AI tidak memberikan jawaban. Silakan coba lagi."
     except Exception as e:
         print(f"[Gemini SDK Error] {e}")
-        # Fallback ke model pro jika flash gagal
+        # Jika pro gagal juga, baru coba flash sebagai cadangan
         try:
-            model_pro = genai.GenerativeModel("gemini-pro")
-            response_pro = model_pro.generate_content(prompt)
-            return response_pro.text
+            model_flash = genai.GenerativeModel("gemini-1.5-flash")
+            response_flash = model_flash.generate_content(prompt)
+            return response_flash.text
         except:
             return f"Terjadi gangguan pada asisten AI. (Detail: {str(e)[:50]}...)"
 
