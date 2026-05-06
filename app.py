@@ -28,8 +28,16 @@ GOOGLE_AUTH_URL  = "https://accounts.google.com/o/oauth2/v2/auth"
 GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token"
 GOOGLE_USER_URL  = "https://www.googleapis.com/oauth2/v3/userinfo"
 
-# Supabase client
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_ANON_KEY)
+# Supabase client (lazy init agar tidak crash di Vercel jika env var belum diset)
+_supabase_client: Client = None
+
+def get_supabase() -> Client:
+    global _supabase_client
+    if _supabase_client is None:
+        if not SUPABASE_URL or not SUPABASE_ANON_KEY:
+            raise RuntimeError("SUPABASE_URL dan SUPABASE_ANON_KEY belum diset di environment variables!")
+        _supabase_client = create_client(SUPABASE_URL, SUPABASE_ANON_KEY)
+    return _supabase_client
 
 # =====================
 # AUTH DECORATOR
@@ -85,7 +93,7 @@ Tolong jawab pertanyaan di atas berdasarkan pasal-pasal tersebut."""
 def upsert_user(email, name, avatar=None, provider="google"):
     """Simpan atau update user ke tabel 'users' di Supabase."""
     try:
-        supabase.table("users").upsert({
+        get_supabase().table("users").upsert({
             "email": email,
             "name": name,
             "avatar": avatar,
@@ -140,7 +148,7 @@ def auth_register():
 
     try:
         # Cek apakah email sudah terdaftar
-        existing = supabase.table("users").select("email").eq("email", email).execute()
+        existing = get_supabase().table("users").select("email").eq("email", email).execute()
         if existing.data:
             return jsonify({"error": "Email sudah terdaftar. Silakan login."}), 409
 
@@ -148,7 +156,7 @@ def auth_register():
         import bcrypt
         hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
 
-        supabase.table("users").insert({
+        get_supabase().table("users").insert({
             "email": email,
             "name": name,
             "password_hash": hashed,
@@ -173,7 +181,7 @@ def auth_login():
 
     try:
         import bcrypt
-        result = supabase.table("users").select("*").eq("email", email).execute()
+        result = get_supabase().table("users").select("*").eq("email", email).execute()
         if not result.data:
             return jsonify({"error": "Email tidak ditemukan."}), 404
 
@@ -278,7 +286,7 @@ def tanya():
 def get_history():
     email = session["user"]["email"]
     try:
-        result = supabase.table("chat_sessions") \
+        result = get_supabase().table("chat_sessions") \
             .select("id, title, updated_at") \
             .eq("user_email", email) \
             .order("updated_at", desc=True) \
@@ -294,7 +302,7 @@ def get_history():
 def get_session(session_id):
     email = session["user"]["email"]
     try:
-        result = supabase.table("chat_sessions") \
+        result = get_supabase().table("chat_sessions") \
             .select("*") \
             .eq("id", session_id) \
             .eq("user_email", email) \
@@ -313,7 +321,7 @@ def save_session(session_id):
     title    = data.get("title", "Konsultasi")
     messages = data.get("messages", [])
     try:
-        supabase.table("chat_sessions").upsert({
+        get_supabase().table("chat_sessions").upsert({
             "id":         session_id,
             "user_email": email,
             "title":      title,
@@ -330,7 +338,7 @@ def save_session(session_id):
 def delete_session(session_id):
     email = session["user"]["email"]
     try:
-        supabase.table("chat_sessions") \
+        get_supabase().table("chat_sessions") \
             .delete() \
             .eq("id", session_id) \
             .eq("user_email", email) \
