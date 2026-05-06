@@ -92,9 +92,17 @@ Pasal-pasal yang relevan dari database hukum Indonesia:
 Tolong jawab pertanyaan di atas berdasarkan pasal-pasal tersebut."""
 
     try:
-        # Paksa pakai gemini-pro yang paling stabil untuk ngetes koneksi
-        model = genai.GenerativeModel("gemini-pro")
-        response = model.generate_content(prompt)
+        # Coba model 1.5 flash dulu, kalau gagal pake alias 'latest' atau versi 2.0
+        try:
+            model = genai.GenerativeModel("gemini-1.5-flash")
+            response = model.generate_content(prompt)
+        except:
+            try:
+                model = genai.GenerativeModel("gemini-flash-latest")
+                response = model.generate_content(prompt)
+            except:
+                model = genai.GenerativeModel("gemini-2.0-flash")
+                response = model.generate_content(prompt)
         
         if response and response.text:
             return response.text
@@ -102,13 +110,7 @@ Tolong jawab pertanyaan di atas berdasarkan pasal-pasal tersebut."""
         return "Maaf, AI tidak memberikan jawaban. Silakan coba lagi."
     except Exception as e:
         print(f"[Gemini SDK Error] {e}")
-        # Jika pro gagal juga, baru coba flash sebagai cadangan
-        try:
-            model_flash = genai.GenerativeModel("gemini-1.5-flash")
-            response_flash = model_flash.generate_content(prompt)
-            return response_flash.text
-        except:
-            return f"Terjadi gangguan pada asisten AI. (Detail: {str(e)[:50]}...)"
+        return f"Terjadi gangguan pada asisten AI. (Detail: {str(e)[:50]}...)"
 
 # =====================
 # HELPER SUPABASE USER
@@ -303,22 +305,6 @@ def tanya():
     pasal   = cari_pasal(pertanyaan)
     jawaban = tanya_gemini(pertanyaan, pasal)
     return jsonify({"jawaban": jawaban})
-
-# =====================
-# ROUTES — DEBUG AI
-# =====================
-@app.route("/debug-ai")
-def debug_ai():
-    if not GEMINI_API_KEY:
-        return "API Key Kosong!"
-    try:
-        models = [m.name for m in genai.list_models()]
-        return jsonify({
-            "key_prefix": GEMINI_API_KEY[:5] + "...",
-            "available_models": models
-        })
-    except Exception as e:
-        return f"Error listing models: {str(e)}"
 
 # =====================
 # ROUTES — HISTORY
