@@ -23,9 +23,8 @@ GOOGLE_CLIENT_SECRET= os.getenv("GOOGLE_CLIENT_SECRET", "").strip()
 GOOGLE_REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI", "http://localhost:5000/auth/google/callback").strip()
 
 PASAL_API_URL = "https://pasal.id/api/v1/search"
-# Gunakan gemini-pro sebagai yang paling stabil jika flash bermasalah
-GEMINI_MODEL = "gemini-pro" 
-GEMINI_BASE_URL = f"https://generativelanguage.googleapis.com/v1/models/{GEMINI_MODEL}:generateContent"
+# Gunakan endpoint v1beta flash yang paling toleran
+GEMINI_URL_TEMPLATE = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key="
 
 GOOGLE_AUTH_URL  = "https://accounts.google.com/o/oauth2/v2/auth"
 GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token"
@@ -87,17 +86,14 @@ Pasal-pasal yang relevan dari database hukum Indonesia:
 Tolong jawab pertanyaan di atas berdasarkan pasal-pasal tersebut."""
 
     try:
-        # Konstruksi URL dengan Key terbaru
-        url = f"https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key={GEMINI_API_KEY}"
+        url = f"{GEMINI_URL_TEMPLATE}{GEMINI_API_KEY}"
         body = {"contents": [{"parts": [{"text": prompt}]}]}
         
-        # Coba request
-        response = requests.post(url, json=body, timeout=25)
+        response = requests.post(url, json=body, timeout=30)
         
-        # Jika gemini-pro pun 404, coba flash-latest (cadangan terakhir)
-        if response.status_code == 404:
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key={GEMINI_API_KEY}"
-            response = requests.post(url, json=body, timeout=25)
+        # Log untuk debugging di Vercel jika masih error
+        if response.status_code != 200:
+            print(f"[Gemini Error Response] {response.status_code} - {response.text}")
             
         response.raise_for_status()
         data = response.json()
