@@ -305,6 +305,22 @@ def tanya():
     return jsonify({"jawaban": jawaban})
 
 # =====================
+# ROUTES — DEBUG AI
+# =====================
+@app.route("/debug-ai")
+def debug_ai():
+    if not GEMINI_API_KEY:
+        return "API Key Kosong!"
+    try:
+        models = [m.name for m in genai.list_models()]
+        return jsonify({
+            "key_prefix": GEMINI_API_KEY[:5] + "...",
+            "available_models": models
+        })
+    except Exception as e:
+        return f"Error listing models: {str(e)}"
+
+# =====================
 # ROUTES — HISTORY
 # =====================
 @app.route("/history", methods=["GET"])
