@@ -2,16 +2,23 @@ from flask import Flask, render_template, request, jsonify, redirect, url_for, s
 import requests
 import os
 import uuid
+import hmac
+from datetime import datetime, timezone
 from urllib.parse import urlencode
 from dotenv import load_dotenv
 from functools import wraps
 from supabase import create_client, Client
-import google.generativeai as genai
+from google import genai
 
 load_dotenv()
 
 app = Flask(__name__, template_folder='../templates')
 app.secret_key = os.getenv("SECRET_KEY", "dev-secret-change-this")
+app.config.update(
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE="Lax",
+    SESSION_COOKIE_SECURE=os.getenv("COOKIE_SECURE", "false").lower() == "true",
+)
 
 # =====================
 # CONFIG
@@ -24,10 +31,16 @@ GOOGLE_CLIENT_SECRET= os.getenv("GOOGLE_CLIENT_SECRET", "").strip()
 GOOGLE_REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI", "http://localhost:5000/auth/google/callback").strip()
 
 PASAL_API_URL = "https://pasal.id/api/v1/search"
+PASAL_API_TOKEN = os.getenv("PASAL_API_TOKEN", "").strip()
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash").strip()
+GEMINI_FALLBACK_MODELS = [
+    model.strip()
+    for model in os.getenv("GEMINI_FALLBACK_MODELS", "gemini-3.5-flash,gemini-2.5-flash-lite").split(",")
+    if model.strip() and model.strip() != GEMINI_MODEL
+]
 
-# Inisialisasi Gemini SDK
-if GEMINI_API_KEY:
-    genai.configure(api_key=GEMINI_API_KEY)
+# Inisialisasi Gemini SDK baru
+_gemini_client = genai.Client(api_key=GEMINI_API_KEY) if GEMINI_API_KEY else None
 
 GOOGLE_AUTH_URL  = "https://accounts.google.com/o/oauth2/v2/auth"
 GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token"
@@ -59,13 +72,32 @@ def login_required(f):
 # FUNGSI CARI PASAL
 # =====================
 def cari_pasal(kata_kunci):
+    if not PASAL_API_TOKEN:
+        return "Database pasal belum dikonfigurasi: PASAL_API_TOKEN tidak tersedia."
     try:
-        response = requests.get(PASAL_API_URL, params={"q": kata_kunci})
+        response = requests.get(
+            PASAL_API_URL,
+            params={"q": kata_kunci, "limit": 5},
+            headers={"Authorization": f"Bearer {PASAL_API_TOKEN}"},
+            timeout=15,
+        )
+        response.raise_for_status()
         data = response.json()
         hasil = ""
         for item in data.get("results", [])[:3]:
-            hasil += f"\n📌 {item.get('title', '')}\n"
-            hasil += f"{item.get('content', '')}\n"
+            work = item.get("work") or {}
+            hasil += f"\n📌 {work.get('title', 'Peraturan tanpa judul')}"
+            hasil += f" ({work.get('type', '')} {work.get('number', '')}/{work.get('year', '')})\n"
+            hasil += f"Status: {work.get('status', 'tidak diketahui')}\n"
+            hasil += f"Referensi: {item.get('url', '')}\n"
+            for pasal in item.get("matching_pasals", [])[:3]:
+                hasil += f"Pasal {pasal.get('pasal', '')}: {pasal.get('url', '')}\n"
+        if not hasil:
+            saran = data.get("did_you_mean") or []
+            if saran:
+                return "Tidak ditemukan hasil. Saran: " + ", ".join(
+                    (s.get("work") or {}).get("title", "") for s in saran[:5]
+                )
         return hasil if hasil else "Tidak ditemukan pasal yang relevan."
     except Exception as e:
         print(f"[cari_pasal error] {e}")
@@ -75,7 +107,7 @@ def cari_pasal(kata_kunci):
 # FUNGSI TANYA KE GEMINI
 # =====================
 def tanya_gemini(pertanyaan, konteks_pasal):
-    if not GEMINI_API_KEY:
+    if _gemini_client is None:
         return "Sistem AI belum dikonfigurasi (API Key kosong)."
 
     prompt = f"""Kamu adalah asisten hukum Indonesia yang membantu 
@@ -89,28 +121,33 @@ Pertanyaan: {pertanyaan}
 Pasal-pasal yang relevan dari database hukum Indonesia:
 {konteks_pasal}
 
-Tolong jawab pertanyaan di atas berdasarkan pasal-pasal tersebut."""
+Catatan penting: API Pasal.id menyediakan metadata dan tautan referensi, bukan teks lengkap
+peraturan. Jangan mengarang isi pasal. Jika teks pasal tidak tersedia dalam konteks,
+jelaskan keterbatasan tersebut dan arahkan pengguna ke tautan referensi yang tersedia.
+
+Tolong jawab pertanyaan di atas berdasarkan informasi yang benar-benar tersedia."""
 
     try:
-        # Coba model 1.5 flash dulu, kalau gagal pake alias 'latest' atau versi 2.0
-        try:
-            model = genai.GenerativeModel("gemini-1.5-flash")
-            response = model.generate_content(prompt)
-        except:
+        last_error = None
+        for model_name in [GEMINI_MODEL, *GEMINI_FALLBACK_MODELS]:
             try:
-                model = genai.GenerativeModel("gemini-flash-latest")
-                response = model.generate_content(prompt)
-            except:
-                model = genai.GenerativeModel("gemini-2.0-flash")
-                response = model.generate_content(prompt)
-        
-        if response and response.text:
-            return response.text
+                response = _gemini_client.models.generate_content(
+                    model=model_name,
+                    contents=prompt,
+                )
+                if response and getattr(response, "text", None):
+                    return response.text
+            except Exception as e:
+                last_error = e
+                print(f"[Gemini model error] {model_name}: {e}")
+                continue
             
+        if last_error:
+            raise last_error
         return "Maaf, AI tidak memberikan jawaban. Silakan coba lagi."
     except Exception as e:
         print(f"[Gemini SDK Error] {e}")
-        return f"Terjadi gangguan pada asisten AI. (Detail: {str(e)[:50]}...)"
+        return "Terjadi gangguan pada asisten AI. Silakan coba lagi nanti."
 
 # =====================
 # HELPER SUPABASE USER
@@ -124,8 +161,10 @@ def upsert_user(email, name, avatar=None, provider="google"):
             "avatar": avatar,
             "provider": provider,
         }, on_conflict="email").execute()
+        return True
     except Exception as e:
         print(f"[Supabase upsert error] {e}")
+        return False
 
 # =====================
 # ROUTES — PAGES
@@ -133,6 +172,10 @@ def upsert_user(email, name, avatar=None, provider="google"):
 @app.route("/")
 def landing():
     return render_template("landing.html")
+
+@app.route("/prototype")
+def prototype():
+    return render_template("prototype.html")
 
 @app.route("/chat")
 @login_required
@@ -161,7 +204,7 @@ def logout():
 # =====================
 @app.route("/auth/register", methods=["POST"])
 def auth_register():
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
     name  = data.get("name", "").strip()
     email = data.get("email", "").strip().lower()
     password = data.get("password", "")
@@ -197,7 +240,7 @@ def auth_register():
 
 @app.route("/auth/login", methods=["POST"])
 def auth_login():
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
     email    = data.get("email", "").strip().lower()
     password = data.get("password", "")
 
@@ -255,21 +298,35 @@ def auth_google():
 @app.route("/auth/google/callback")
 def auth_google_callback():
     # Validasi state (CSRF protection)
-    if request.args.get("state") != session.pop("oauth_state", None):
+    received_state = request.args.get("state", "")
+    expected_state = session.get("oauth_state", "")
+    if not received_state or not expected_state or not hmac.compare_digest(received_state, expected_state):
+        session.pop("oauth_state", None)
         return "State mismatch. Kemungkinan serangan CSRF.", 403
+
+    # State hanya boleh dipakai sekali setelah berhasil divalidasi.
+    session.pop("oauth_state", None)
+
+    if request.args.get("error"):
+        return redirect(url_for("login_page") + "?error=google_denied")
 
     code = request.args.get("code")
     if not code:
         return redirect(url_for("login_page") + "?error=google_denied")
 
     # Tukar code → access token
-    token_resp = requests.post(GOOGLE_TOKEN_URL, data={
-        "code":          code,
-        "client_id":     GOOGLE_CLIENT_ID,
-        "client_secret": GOOGLE_CLIENT_SECRET,
-        "redirect_uri":  GOOGLE_REDIRECT_URI,
-        "grant_type":    "authorization_code",
-    })
+    try:
+        token_resp = requests.post(GOOGLE_TOKEN_URL, data={
+            "code":          code,
+            "client_id":     GOOGLE_CLIENT_ID,
+            "client_secret": GOOGLE_CLIENT_SECRET,
+            "redirect_uri":  GOOGLE_REDIRECT_URI,
+            "grant_type":    "authorization_code",
+        }, timeout=15)
+        token_resp.raise_for_status()
+    except requests.RequestException as e:
+        print(f"[Google token error] {e}")
+        return redirect(url_for("login_page") + "?error=token_failed")
     token_data = token_resp.json()
     access_token = token_data.get("access_token")
 
@@ -277,7 +334,16 @@ def auth_google_callback():
         return redirect(url_for("login_page") + "?error=token_failed")
 
     # Ambil info user dari Google
-    user_resp = requests.get(GOOGLE_USER_URL, headers={"Authorization": f"Bearer {access_token}"})
+    try:
+        user_resp = requests.get(
+            GOOGLE_USER_URL,
+            headers={"Authorization": f"Bearer {access_token}"},
+            timeout=15,
+        )
+        user_resp.raise_for_status()
+    except requests.RequestException as e:
+        print(f"[Google userinfo error] {e}")
+        return redirect(url_for("login_page") + "?error=userinfo_failed")
     user_info = user_resp.json()
 
     email  = user_info.get("email")
@@ -288,7 +354,8 @@ def auth_google_callback():
         return redirect(url_for("login_page") + "?error=no_email")
 
     # Simpan ke Supabase
-    upsert_user(email=email, name=name, avatar=avatar, provider="google")
+    if not upsert_user(email=email, name=name, avatar=avatar, provider="google"):
+        return redirect(url_for("login_page") + "?error=database_unavailable")
 
     # Set session
     session["user"] = {"email": email, "name": name, "avatar": avatar}
@@ -300,8 +367,12 @@ def auth_google_callback():
 @app.route("/tanya", methods=["POST"])
 @login_required
 def tanya():
-    data = request.json
-    pertanyaan = data.get("pertanyaan", "")
+    data = request.get_json(silent=True) or {}
+    pertanyaan = str(data.get("pertanyaan", "")).strip()
+    if not pertanyaan:
+        return jsonify({"error": "Pertanyaan wajib diisi."}), 400
+    if len(pertanyaan) > 4000:
+        return jsonify({"error": "Pertanyaan terlalu panjang."}), 400
     pasal   = cari_pasal(pertanyaan)
     jawaban = tanya_gemini(pertanyaan, pasal)
     return jsonify({"jawaban": jawaban})
@@ -345,21 +416,23 @@ def get_session(session_id):
 @login_required
 def save_session(session_id):
     email = session["user"]["email"]
-    data  = request.get_json()
-    title    = data.get("title", "Konsultasi")
+    data  = request.get_json(silent=True) or {}
+    title    = str(data.get("title", "Konsultasi")).strip()[:200] or "Konsultasi"
     messages = data.get("messages", [])
+    if not isinstance(messages, list):
+        return jsonify({"error": "Format messages tidak valid."}), 400
     try:
         get_supabase().table("chat_sessions").upsert({
             "id":         session_id,
             "user_email": email,
             "title":      title,
             "messages":   messages,
-            "updated_at": "now()",
+            "updated_at": datetime.now(timezone.utc).isoformat(),
         }, on_conflict="id").execute()
         return jsonify({"success": True})
     except Exception as e:
         print(f"[Save session error] {e}")
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": "Riwayat belum dapat disimpan."}), 503
 
 @app.route("/history/<session_id>", methods=["DELETE"])
 @login_required
@@ -374,7 +447,7 @@ def delete_session(session_id):
         return jsonify({"success": True})
     except Exception as e:
         print(f"[Delete session error] {e}")
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": "Riwayat belum dapat dihapus."}), 503
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=os.getenv("FLASK_DEBUG", "false").lower() == "true")

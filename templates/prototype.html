@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Legatia — Counsel for what matters</title>
+  <meta name="description" content="Legatia adalah asisten hukum Indonesia yang jernih, tenang, dan mudah diakses.">
+  <style>
+    :root {
+      --night: #071326;
+      --night-soft: #0d1d35;
+      --line: rgba(223, 235, 255, .18);
+      --muted: #9aabc4;
+      --paper: #eef3f8;
+      --cream: #e7dcc4;
+      --gold: #c9a954;
+      --white: #fff;
+      --max: 1440px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--night);
+      color: var(--paper);
+      font-family: Arial, Helvetica, sans-serif;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    .site { max-width: var(--max); margin: auto; padding: 0 5vw; }
+    .topbar {
+      height: 92px; display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--line); position: relative; z-index: 5;
+    }
+    .wordmark { display: flex; align-items: center; gap: 13px; letter-spacing: .16em; font-size: 12px; text-transform: uppercase; }
+    .mark { color: var(--gold); font-family: Georgia, serif; font-size: 30px; line-height: 1; letter-spacing: -.12em; }
+    .nav { display: flex; align-items: center; gap: clamp(18px, 3vw, 48px); color: var(--muted); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; }
+    .nav a:hover { color: var(--white); }
+    .nav .contact { color: var(--cream); border-bottom: 1px solid var(--gold); padding-bottom: 7px; }
+    .hero { min-height: calc(100vh - 92px); display: grid; grid-template-columns: 1fr 1.2fr; align-items: center; gap: 4vw; padding: 7vh 0 10vh; }
+    .eyebrow { color: var(--gold); font-size: 11px; letter-spacing: .25em; text-transform: uppercase; margin: 0 0 30px; }
+    h1, h2, h3 { font-family: Georgia, 'Times New Roman', serif; font-weight: 400; margin: 0; }
+    h1 { color: var(--white); font-size: clamp(58px, 8.2vw, 142px); letter-spacing: -.065em; line-height: .9; max-width: 720px; }
+    .hero-copy { color: var(--muted); font-size: 16px; line-height: 1.7; max-width: 360px; margin: 36px 0; }
+    .button { display: inline-flex; align-items: center; gap: 22px; color: var(--night); background: var(--cream); padding: 16px 20px; font-size: 11px; letter-spacing: .15em; text-transform: uppercase; transition: transform .25s, background .25s; }
+    .button:after { content: '↗'; font-size: 17px; }
+    .button:hover { background: var(--gold); transform: translateY(-3px); }
+    .visual { min-height: 560px; display: grid; place-items: center; position: relative; perspective: 1100px; }
+    .visual:before { content: ''; position: absolute; width: min(48vw, 610px); height: min(48vw, 610px); border: 1px solid rgba(201,169,84,.35); border-radius: 50%; }
+    .visual:after { content: ''; position: absolute; width: min(33vw, 420px); height: min(33vw, 420px); border: 1px solid rgba(223,235,255,.12); border-radius: 50%; }
+    .scale-wrap { width: 390px; height: 470px; position: relative; transform-style: preserve-3d; animation: rotateStatue 16s linear infinite; z-index: 1; }
+    .scale-wrap:before { content: ''; position: absolute; left: 50%; top: 8%; height: 66%; width: 8px; transform: translateX(-50%); background: linear-gradient(90deg, #8b712e, #f0d67b 50%, #8b712e); box-shadow: 0 0 24px rgba(201,169,84,.35); }
+    .scale-wrap:after { content: ''; position: absolute; left: 50%; top: 3%; width: 34px; height: 34px; transform: translateX(-50%) rotate(45deg); border: 8px solid var(--gold); background: var(--night); }
+    .scale-head { position: absolute; left: 50%; top: 18%; width: 290px; height: 10px; transform: translateX(-50%); background: var(--gold); border-radius: 10px; box-shadow: 0 0 20px rgba(201,169,84,.35); }
+    .scale-head:before, .scale-head:after { content: ''; position: absolute; top: 5px; width: 2px; height: 125px; background: var(--gold); }
+    .scale-head:before { left: 20px; transform: rotate(12deg); transform-origin: top; }
+    .scale-head:after { right: 20px; transform: rotate(-12deg); transform-origin: top; }
+    .pan { position: absolute; top: 45%; width: 105px; height: 18px; border: 2px solid var(--gold); border-radius: 0 0 80px 80px; transform: translateX(-50%); background: rgba(201,169,84,.1); }
+    .pan.left { left: 22%; transform: rotate(6deg); }
+    .pan.right { right: 0; transform: rotate(-6deg); }
+    .pan:before { content: ''; position: absolute; top: -51px; left: 50%; width: 1px; height: 50px; background: var(--gold); }
+    .stem { position: absolute; left: 50%; bottom: 15%; width: 24px; height: 235px; transform: translateX(-50%); background: linear-gradient(90deg, #80672d, #efd274 45%, #80672d); }
+    .base { position: absolute; left: 50%; bottom: 7%; width: 240px; height: 25px; transform: translateX(-50%); background: var(--gold); clip-path: polygon(10% 0, 90% 0, 100% 100%, 0 100%); box-shadow: 0 8px 0 rgba(0,0,0,.2); }
+    .vertical-label { position: absolute; right: 0; bottom: 28%; color: var(--muted); writing-mode: vertical-rl; letter-spacing: .25em; text-transform: uppercase; font-size: 10px; }
+    @keyframes rotateStatue { from { transform: rotateY(0deg); } to { transform: rotateY(360deg); } }
+    .rule { border-top: 1px solid var(--line); }
+    .intro { display: grid; grid-template-columns: 1.1fr .9fr; gap: 10vw; padding: 130px 0; }
+    .intro h2 { font-size: clamp(40px, 5vw, 80px); letter-spacing: -.05em; line-height: .98; }
+    .intro p, .value p { color: var(--muted); line-height: 1.8; font-size: 15px; max-width: 430px; }
+    .section-head { display: flex; justify-content: space-between; align-items: end; padding: 120px 0 38px; }
+    .section-head h2 { font-size: clamp(42px, 6vw, 88px); letter-spacing: -.06em; }
+    .section-number { color: var(--gold); font: 18px Georgia, serif; }
+    .areas { display: grid; grid-template-columns: repeat(2, 1fr); border-top: 1px solid var(--line); }
+    .area { display: flex; justify-content: space-between; gap: 20px; padding: 27px 5px 27px 0; border-bottom: 1px solid var(--line); color: var(--cream); font: 24px Georgia, serif; }
+    .area:nth-child(odd) { margin-right: 4vw; }
+    .area:nth-child(even) { padding-left: 4vw; border-left: 1px solid var(--line); }
+    .area span { color: var(--gold); font: 12px Arial, sans-serif; }
+    .values { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .value { min-height: 300px; padding: 36px 34px 36px 0; border-right: 1px solid var(--line); }
+    .value + .value { padding-left: 34px; }
+    .value:last-child { border-right: 0; }
+    .value h3 { color: var(--cream); font-size: 32px; margin: 34px 0 18px; }
+    .value .num { color: var(--gold); font-size: 11px; letter-spacing: .15em; }
+    .statement { padding: 150px 0; text-align: center; }
+    .statement h2 { max-width: 930px; margin: auto; color: var(--cream); font-size: clamp(45px, 7vw, 104px); line-height: .95; letter-spacing: -.06em; }
+    footer { border-top: 1px solid var(--line); padding: 28px 0 50px; display: flex; justify-content: space-between; color: var(--muted); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; }
+    @media (max-width: 800px) {
+      .topbar { height: 76px; } .nav { gap: 12px; } .nav a:not(.contact) { display: none; }
+      .hero, .intro { grid-template-columns: 1fr; } .hero { padding-top: 60px; } .visual { min-height: 430px; }
+      .scale-wrap { transform: scale(.78); animation-name: rotateStatueMobile; } .visual:before { width: 330px; height: 330px; } .visual:after { width: 240px; height: 240px; }
+      .areas { grid-template-columns: 1fr; } .area:nth-child(even) { padding-left: 0; border-left: 0; } .area:nth-child(odd) { margin-right: 0; }
+      .values { grid-template-columns: 1fr; } .value, .value + .value { padding: 28px 0; border-right: 0; border-bottom: 1px solid var(--line); } .value:last-child { border-bottom: 0; }
+      .section-head { padding-top: 90px; } footer { gap: 20px; flex-direction: column; }
+    }
+    @keyframes rotateStatueMobile { from { transform: scale(.78) rotateY(0deg); } to { transform: scale(.78) rotateY(360deg); } }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .scale-wrap { animation: none; } }
+  </style>
+</head>
+<body id="home">
+  <div class="site">
+    <header class="topbar">
+      <a class="wordmark" href="#home"><span class="mark">⚖</span><span>Legatia / Counsel</span></a>
+      <nav class="nav" aria-label="Navigasi utama">
+        <a href="#areas">Bidang bantuan</a><a href="#vision">Visi</a><a href="#values">Nilai</a><a class="contact" href="#contact">Hubungi kami</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div>
+          <p class="eyebrow">Asisten hukum Indonesia / 2026</p>
+          <h1>Lawyers<br>you trust.</h1>
+          <p class="hero-copy">Kejelasan hukum untuk keputusan yang penting. Legatia membantu Anda memahami langkah berikutnya dengan bahasa yang tenang dan mudah dipahami.</p>
+          <a class="button" href="{{ url_for('login_page') }}">Mulai bersama Legatia</a>
+        </div>
+        <div class="visual" aria-label="Patung timbangan hukum berputar">
+          <div class="scale-wrap" aria-hidden="true"><div class="scale-head"></div><div class="pan left"></div><div class="pan right"></div><div class="stem"></div><div class="base"></div></div>
+          <span class="vertical-label">Justice / Balance / Clarity</span>
+        </div>
+      </section>
+
+      <section class="intro rule" id="vision">
+        <h2>Hukum yang terasa lebih dekat.</h2>
+        <div><p>Ketika persoalan hukum datang, yang dibutuhkan bukan lebih banyak kebisingan. Anda membutuhkan konteks, pilihan, dan arah yang dapat dipercaya.</p><p>Legatia menyatukan pengetahuan hukum Indonesia dengan pengalaman digital yang manusiawi.</p></div>
+      </section>
+
+      <section id="areas">
+        <div class="section-head"><h2>Bidang<br>bantuan</h2><span class="section-number">01 / 04</span></div>
+        <div class="areas"><a class="area" href="{{ url_for('login_page') }}">Kontrak & perjanjian <span>↗</span></a><a class="area" href="{{ url_for('login_page') }}">Bisnis & perusahaan <span>↗</span></a><a class="area" href="{{ url_for('login_page') }}">Ketenagakerjaan <span>↗</span></a><a class="area" href="{{ url_for('login_page') }}">Keluarga & waris <span>↗</span></a><a class="area" href="{{ url_for('login_page') }}">Sengketa & mediasi <span>↗</span></a><a class="area" href="{{ url_for('login_page') }}">Properti & pertanahan <span>↗</span></a></div>
+      </section>
+
+      <section id="values">
+        <div class="section-head"><h2>Our values</h2><span class="section-number">02 / 04</span></div>
+        <div class="values"><article class="value"><span class="num">01</span><h3>Jernih</h3><p>Kami menyederhanakan bahasa hukum tanpa menghilangkan makna dan kehati-hatiannya.</p></article><article class="value"><span class="num">02</span><h3>Berimbang</h3><p>Setiap jawaban melihat konteks, risiko, dan pilihan yang tersedia secara utuh.</p></article><article class="value"><span class="num">03</span><h3>Manusiawi</h3><p>Di balik setiap persoalan ada manusia. Pengalaman Anda selalu menjadi titik awal.</p></article></div>
+      </section>
+
+      <section class="statement"><p class="eyebrow">Legatia / Indonesian legal intelligence</p><h2>Clarity is a form of care.</h2></section>
+    </main>
+
+    <footer id="contact"><span>© 2026 Legatia</span><span>Jakarta / Indonesia</span><a href="{{ url_for('login_page') }}">Masuk dengan Google ↗</a></footer>
+  </div>
+</body>
+</html>
