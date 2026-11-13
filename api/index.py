@@ -106,16 +106,23 @@ def cari_pasal(kata_kunci):
 # =====================
 # FUNGSI TANYA KE GEMINI
 # =====================
-def tanya_gemini(pertanyaan, konteks_pasal):
+def tanya_gemini(pertanyaan, konteks_pasal, profil_user=None):
     if _gemini_client is None:
         return "Sistem AI belum dikonfigurasi (API Key kosong)."
+
+    info_profil = ""
+    if profil_user and isinstance(profil_user, dict):
+        kw = profil_user.get("kewarganegaraan", "")
+        pk = profil_user.get("pekerjaan", "")
+        if kw or pk:
+            info_profil = f"\nInformasi latar belakang pengguna:\n- Kewarganegaraan: {kw or 'tidak disebutkan'}\n- Pekerjaan: {pk or 'tidak disebutkan'}\nSesuaikan penjelasan hukum agar relevan dengan konteks pengguna jika diperlukan.\n"
 
     prompt = f"""Kamu adalah asisten hukum Indonesia yang membantu 
 masyarakat memahami hukum dengan bahasa yang mudah dimengerti.
 Selalu cantumkan referensi pasal yang relevan.
 Ingatkan pengguna bahwa jawabanmu bukan nasihat hukum resmi 
 dan sarankan konsultasi ke pengacara untuk kasus spesifik.
-
+{info_profil}
 Pertanyaan: {pertanyaan}
 
 Pasal-pasal yang relevan dari database hukum Indonesia:
@@ -180,11 +187,37 @@ def prototype():
 @app.route("/chat")
 @login_required
 def chat():
+    if not session.get("user", {}).get("onboarding"):
+        return redirect(url_for("onboarding_page"))
     return render_template("index.html", user=session["user"])
+
+@app.route("/onboarding")
+@login_required
+def onboarding_page():
+    if session.get("user", {}).get("onboarding"):
+        return redirect(url_for("chat"))
+    return render_template("onboarding.html")
+
+@app.route("/api/onboarding", methods=["POST"])
+@login_required
+def save_onboarding():
+    data = request.get_json(silent=True) or {}
+    if "user" in session:
+        session["user"]["onboarding"] = data
+        session.modified = True
+    email = session.get("user", {}).get("email")
+    if email:
+        try:
+            get_supabase().table("users").update({"onboarding": data}).eq("email", email).execute()
+        except Exception as e:
+            print(f"[Supabase onboarding note] {e}")
+    return jsonify({"success": True, "redirect": url_for("chat")})
 
 @app.route("/login")
 def login_page():
     if "user" in session:
+        if not session["user"].get("onboarding"):
+            return redirect(url_for("onboarding_page"))
         return redirect(url_for("chat"))
     return render_template("login.html")
 
@@ -357,7 +390,7 @@ def auth_google_callback():
 
     # Set session
     session["user"] = {"email": email, "name": name, "avatar": avatar}
-    return redirect(url_for("chat"))
+    return redirect(url_for("onboarding_page"))
 
 # =====================
 # ROUTES — CHATBOT
@@ -372,7 +405,8 @@ def tanya():
     if len(pertanyaan) > 4000:
         return jsonify({"error": "Pertanyaan terlalu panjang."}), 400
     pasal   = cari_pasal(pertanyaan)
-    jawaban = tanya_gemini(pertanyaan, pasal)
+    profil_user = session.get("user", {}).get("onboarding")
+    jawaban = tanya_gemini(pertanyaan, pasal, profil_user)
     return jsonify({"jawaban": jawaban})
 
 # =====================

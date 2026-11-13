@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Legatia - Sebelum Memulai</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy-deep: #060f22;
+      --navy: #0b1a33;
+      --navy-light: #142a4d;
+      --gold: #c9a227;
+      --gold-light: #e6c35c;
+      --text: #0b1a33;
+      --muted: #6b7a90;
+      --chip: #f1f3f7;
+      --chip-hover: #e4e8ef;
+      --line: #e3e7ee;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px;
+      background:
+        radial-gradient(ellipse at top left, rgba(201, 162, 39, 0.10), transparent 55%),
+        linear-gradient(160deg, var(--navy-light) 0%, var(--navy-deep) 100%);
+    }
+
+    .card {
+      width: 100%;
+      max-width: 760px;
+      min-height: 520px;
+      background: #ffffff;
+      border-radius: 28px;
+      padding: 52px 60px 36px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+    }
+
+    .logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 34px;
+      font-weight: 700;
+      color: var(--navy);
+      letter-spacing: 0.3px;
+    }
+
+    .tagline {
+      margin-top: 10px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .back {
+      align-self: flex-start;
+      margin-top: 40px;
+      background: none;
+      border: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--navy);
+      cursor: pointer;
+      visibility: hidden;
+    }
+
+    .back.visible { visibility: visible; }
+    .back:hover { color: var(--gold); }
+
+    .step {
+      margin-top: 28px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .question {
+      font-size: 22px;
+      font-weight: 400;
+      color: var(--text);
+      line-height: 1.4;
+    }
+
+    .question b {
+      font-weight: 700;
+      border-bottom: 3px solid var(--gold-light);
+      padding-bottom: 1px;
+    }
+
+    .hint {
+      margin-top: 6px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .chip {
+      padding: 11px 18px;
+      border-radius: 10px;
+      background: var(--chip);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      border: 1.5px solid transparent;
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .chip:hover { background: var(--chip-hover); }
+
+    .chip.selected {
+      background: var(--navy);
+      color: #ffffff;
+    }
+
+    .other-input {
+      display: none;
+      width: 100%;
+      max-width: 420px;
+      margin-top: 18px;
+      padding: 13px 16px;
+      border: 1.5px solid var(--line);
+      border-radius: 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      color: var(--text);
+      outline: none;
+    }
+
+    .other-input.show { display: block; }
+    .other-input:focus { border-color: var(--gold); }
+
+    .footer {
+      margin-top: auto;
+      padding-top: 24px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .progress-info {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--text);
+    }
+
+    .bar {
+      width: 96px;
+      height: 4px;
+      background: #dfe6f0;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--gold);
+      border-radius: 999px;
+      transition: width 0.35s ease;
+    }
+
+    .next {
+      padding: 13px 28px;
+      min-width: 120px;
+      background: var(--navy);
+      color: #ffffff;
+      border: none;
+      border-radius: 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s ease, background 0.2s ease;
+    }
+
+    .next:hover:not(:disabled) { background: var(--navy-light); }
+    .next:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    @media (max-width: 600px) {
+      .card { padding: 36px 24px 28px; min-height: auto; border-radius: 22px; }
+      .question { font-size: 19px; }
+      .logo { font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">Legatia</div>
+    <p class="tagline">Sebelum memulai, mohon jawab pertanyaan berikut dengan benar.</p>
+
+    <button class="back" id="back">‹ Kembali</button>
+
+    <div class="step" id="step"></div>
+
+    <div class="footer">
+      <div class="progress-info">
+        <span id="counter"></span>
+        <div class="bar"><div class="bar-fill" id="bar-fill"></div></div>
+      </div>
+      <button class="next" id="next" disabled>Lanjut</button>
+    </div>
+  </div>
+
+  <script>
+    // Tambah atau ubah pertanyaan di sini.
+    // Opsi dengan "other: true" akan menampilkan kolom isian untuk diketik sendiri.
+    const STEPS = [
+      {
+        key: 'kewarganegaraan',
+        question: 'Apa <b>kewarganegaraan</b> Anda?',
+        hint: 'Pilih satu, atau tulis sendiri jika negara Anda tidak ada di pilihan.',
+        options: [
+          { value: 'indonesia', label: 'Warga negara Indonesia' },
+          { value: 'lainnya', label: 'Lainnya', other: true, placeholder: 'Tuliskan negara, contoh: Russia' }
+        ]
+      },
+      {
+        key: 'pekerjaan',
+        question: 'Apa <b>pekerjaan</b> Anda saat ini?',
+        hint: 'Pilih satu yang paling sesuai, atau tulis sendiri.',
+        options: [
+          { value: 'mahasiswa', label: 'Mahasiswa' },
+          { value: 'pekerja', label: 'Pekerja' },
+          { value: 'pengacara', label: 'Pengacara / praktisi hukum' },
+          { value: 'investor', label: 'Investor' },
+          { value: 'lainnya', label: 'Lainnya', other: true, placeholder: 'Tuliskan pekerjaan Anda' }
+        ]
+      }
+    ];
+
+    // Pilihan yang dipilih per langkah, dan teks isian "Lainnya"
+    const selections = {};
+    const otherTexts = {};
+    let current = 0;
+
+    const stepEl = document.getElementById('step');
+    const counter = document.getElementById('counter');
+    const barFill = document.getElementById('bar-fill');
+    const backBtn = document.getElementById('back');
+    const nextBtn = document.getElementById('next');
+
+    function currentStep() {
+      return STEPS[current];
+    }
+
+    // Nilai akhir: teks isian jika memilih "Lainnya", selain itu value pilihan
+    function resolvedAnswer(step) {
+      const selected = selections[step.key];
+      if (!selected) return null;
+      const opt = step.options.find(o => o.value === selected);
+      if (opt && opt.other) {
+        return (otherTexts[step.key] || '').trim() || null;
+      }
+      return opt ? opt.label : null;
+    }
+
+    function renderStep() {
+      const step = currentStep();
+      const selected = selections[step.key];
+      const otherOpt = step.options.find(o => o.other);
+      const showOther = selected && otherOpt && selected === otherOpt.value;
+
+      stepEl.innerHTML = `
+        <div class="question">${step.question}</div>
+        <div class="hint">${step.hint}</div>
+        <div class="chips">
+          ${step.options.map(opt => `
+            <button class="chip ${opt.value === selected ? 'selected' : ''}" data-value="${opt.value}">
+              ${opt.label}
+            </button>`).join('')}
+        </div>
+        ${otherOpt ? `
+          <input type="text" id="other" class="other-input ${showOther ? 'show' : ''}"
+                 placeholder="${otherOpt.placeholder}"
+                 value="${otherTexts[step.key] ? escapeHtml(otherTexts[step.key]) : ''}">
+        ` : ''}
+      `;
+
+      stepEl.querySelectorAll('.chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          selections[step.key] = chip.dataset.value;
+          renderStep();
+          if (otherOpt && chip.dataset.value === otherOpt.value) {
+            document.getElementById('other').focus();
+          }
+          updateFooter();
+        });
+      });
+
+      const other = document.getElementById('other');
+      if (other) {
+        other.addEventListener('input', () => {
+          otherTexts[step.key] = other.value;
+          updateFooter();
+        });
+      }
+
+      updateFooter();
+    }
+
+    function updateFooter() {
+      const step = currentStep();
+      const answered = resolvedAnswer(step) !== null;
+
+      nextBtn.disabled = !answered;
+      nextBtn.textContent = current === STEPS.length - 1 ? 'Mulai' : 'Lanjut';
+
+      counter.textContent = `${current + 1} of ${STEPS.length}`;
+      barFill.style.width = `${((current + 1) / STEPS.length) * 100}%`;
+      backBtn.classList.toggle('visible', current > 0);
+    }
+
+    function escapeHtml(text) {
+      return text.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+    }
+
+    nextBtn.addEventListener('click', async () => {
+      if (current < STEPS.length - 1) {
+        current++;
+        renderStep();
+      } else {
+        const answers = {};
+        STEPS.forEach(step => { answers[step.key] = resolvedAnswer(step); });
+        
+        nextBtn.disabled = true;
+        nextBtn.textContent = 'Menyimpan...';
+
+        try {
+          const res = await fetch('/api/onboarding', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(answers)
+          });
+          const data = await res.json();
+          if (data && data.success) {
+            window.location.href = data.redirect || '/chat';
+          } else {
+            window.location.href = '/chat';
+          }
+        } catch (err) {
+          console.error(err);
+          window.location.href = '/chat';
+        }
+      }
+    });
+
+    backBtn.addEventListener('click', () => {
+      if (current > 0) {
+        current--;
+        renderStep();
+      }
+    });
+
+    renderStep();
+  </script>
+</body>
+</html>
