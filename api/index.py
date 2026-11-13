@@ -12,7 +12,8 @@ from google import genai
 
 load_dotenv()
 
-app = Flask(__name__, template_folder='../templates')
+_base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+app = Flask(__name__, template_folder=os.path.join(_base_dir, 'templates'))
 app.secret_key = os.getenv("SECRET_KEY", "dev-secret-change-this")
 app.config.update(
     SESSION_COOKIE_HTTPONLY=True,

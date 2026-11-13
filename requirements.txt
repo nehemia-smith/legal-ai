@@ -3,5 +3,4 @@ python-dotenv
 requests
 supabase==2.10.0
 bcrypt
-gunicorn
 google-genai>=1.0.0,<4
