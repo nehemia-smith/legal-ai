@@ -190,9 +190,7 @@ def login_page():
 
 @app.route("/register")
 def register_page():
-    if "user" in session:
-        return redirect(url_for("chat"))
-    return render_template("register.html")
+    return redirect(url_for("login_page"))
 
 @app.route("/logout")
 def logout():
