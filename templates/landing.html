@@ -405,7 +405,7 @@
       <h1>Tanya hukum. Dapatkan jawaban yang <i>bisa diperiksa</i>.</h1>
       <p>Legatia membaca kontrak Anda, menunjuk pasal dan peraturan yang relevan, dan menyebut sumbernya. Anda tetap
         memegang keputusan.</p>
-      <a class="btn" href="#mulai">Mulai bertanya</a><a class="ghost" href="#demo">Lihat contoh</a>
+      <a class="btn" href="{{ url_for('login_page') }}">Mulai bertanya</a><a class="ghost" href="#demo">Lihat contoh</a>
 
     </div>
   </header>
@@ -431,7 +431,7 @@
   <section id="mulai" class="dark">
     <h2>Pahami posisi hukum Anda lebih cepat.</h2>
     <p>Daftar dan ajukan pertanyaan pertama Anda hari ini. Dokumen Anda tidak dibagikan ke pihak lain.</p>
-    <a class="btn" href="mailto:halo@contoh-legatia.id">Mulai sekarang</a>
+    <a class="btn" href="{{ url_for('register_page') }}">Mulai sekarang</a>
   </section>
   <footer><span>© 2026 Legatia</span><span>Legatia adalah alat bantu informasi hukum, bukan pengganti advokat.</span>
   </footer>
