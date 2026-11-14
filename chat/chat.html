@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Legatia — Tanya Hukum Indonesia</title>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:wght@400;500;600&display=swap">
+    <link rel="stylesheet" href="chat.css">
+</head>
+
+<body>
+
+    <header class="header">
+        <div class="header-left">
+            <button class="menu-btn" id="menu" aria-label="Buka menu">☰</button>
+            <a class="logo" href="index.html">Legatia</a>
+            <div class="matter-chip" title="Jawaban akan disimpan ke Matter ini">
+                <span class="dot"></span>
+                <span>Matter</span>
+                <b id="matter-name">PHK karyawan PT ABC</b>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="user-chip">
+                <div class="avatar" id="avatar">N</div>
+                <span id="user-name">Nehemia Smith</span>
+            </div>
+            <button class="logout">Keluar</button>
+        </div>
+    </header>
+
+    <div class="layout">
+        <aside class="sidebar" id="sidebar">
+            <button class="new-chat" id="new-chat">＋ Konsultasi baru</button>
+
+            <div>
+                <div class="label">Matter</div>
+                <div class="list">
+                    <div class="list-item matter-item"><span><span class="dot"></span>&nbsp; PHK karyawan PT ABC</span>
+                    </div>
+                    <div class="list-item matter-item"><span><span class="dot"
+                                style="background:var(--muted)"></span>&nbsp; Due diligence PT XYZ</span></div>
+                    <div class="list-item matter-item"><span><span class="dot"
+                                style="background:var(--muted)"></span>&nbsp; NDA vendor</span></div>
+                </div>
+            </div>
+
+            <div>
+                <div class="label">Riwayat</div>
+                <div class="list">
+                    <div class="list-item">Apa hak saya jika di-PHK… <small>Hari ini</small></div>
+                    <div class="list-item">Berapa lama maksimal PKWT <small>Kemarin</small></div>
+                    <div class="list-item">Syarat mendirikan PT <small>Senin</small></div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main">
+            <div class="scroll" id="scroll">
+                <div class="inner">
+                    <section class="welcome" id="welcome">
+                        <div class="mark">§</div>
+                        <h1 class="greeting">Halo, <em id="greet-name">Nehemia</em>.</h1>
+                        <p class="welcome-sub">Tanyakan pertanyaan hukum Anda. Setiap jawaban menunjuk pasal dan
+                            peraturan yang dipakai, lengkap dengan status keberlakuannya.</p>
+
+                        <div class="suggestions">
+                            <button class="suggest" data-q="Apa hak saya jika di-PHK tanpa pesangon?">
+                                <span class="kind">Tanya hukum</span>
+                                <span class="num">01</span>
+                                Apa hak saya jika di-PHK tanpa pesangon?
+                            </button>
+                            <button class="suggest" data-q="Berapa lama maksimal kontrak kerja PKWT?">
+                                <span class="kind">Riset regulasi</span>
+                                <span class="num">02</span>
+                                Berapa lama maksimal kontrak kerja PKWT?
+                            </button>
+                            <button class="suggest" data-q="Bagaimana prosedur hukum sengketa tanah?">
+                                <span class="kind">Tanya hukum</span>
+                                <span class="num">03</span>
+                                Bagaimana prosedur hukum sengketa tanah?
+                            </button>
+                            <button class="suggest" data-q="Apa syarat mendirikan PT di Indonesia?">
+                                <span class="kind">Tanya hukum</span>
+                                <span class="num">04</span>
+                                Apa syarat mendirikan PT di Indonesia?
+                            </button>
+                        </div>
+                    </section>
+
+                    <div class="messages" id="messages"></div>
+                </div>
+            </div>
+
+            <div class="composer">
+                <div class="composer-inner">
+                    <div class="toolbar">
+                        <div class="modes" role="group" aria-label="Mode kerja">
+                            <button class="mode" data-mode="tanya" aria-pressed="true">Tanya hukum</button>
+                            <button class="mode" data-mode="riset" aria-pressed="false">Riset regulasi</button>
+                            <button class="mode" data-mode="review" aria-pressed="false">Review dokumen</button>
+                            <button class="mode" data-mode="draft" aria-pressed="false">Buat dokumen</button>
+                            <button class="mode" data-mode="opini" aria-pressed="false">Opini IRAC</button>
+                        </div>
+                        <div class="seg" role="group" aria-label="Kedalaman jawaban">
+                            <button data-depth="Cepat" aria-pressed="false">Cepat</button>
+                            <button data-depth="Standar" aria-pressed="true">Standar</button>
+                            <button data-depth="Mendalam" aria-pressed="false">Mendalam</button>
+                        </div>
+                    </div>
+
+                    <form class="input-box" id="form">
+                        <input type="text" id="input" placeholder="Tanyakan pertanyaan hukum Anda…" autocomplete="off">
+                        <button class="send" id="send" type="submit" disabled>Kirim</button>
+                    </form>
+                    <div class="disclaimer">Legatia bukan pengganti nasihat hukum resmi. Untuk kasus spesifik,
+                        konsultasikan dengan advokat.</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Source drawer -->
+    <div class="drawer-scrim" id="scrim"></div>
+    <aside class="drawer" id="drawer" aria-hidden="true">
+        <div class="drawer-head">
+            <span class="label">Sumber</span>
+            <button class="drawer-close" id="drawer-close" aria-label="Tutup">✕</button>
+        </div>
+        <span class="tag" id="d-tag"></span>
+        <h2 id="d-title"></h2>
+        <p id="d-date"></p>
+        <p class="excerpt" id="d-excerpt"></p>
+        <p id="d-note"></p>
+        <p class="note">Ringkasan ini adalah data contoh untuk prototype. Verifikasi selalu ke naskah resmi sebelum
+            digunakan.</p>
+        <button class="btn-line" type="button">Buka naskah asli (segera tersedia)</button>
+    </aside>
+
+    <script src="chat.js"></script>
+</body>
+
+</html>
