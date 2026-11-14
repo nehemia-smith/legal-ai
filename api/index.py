@@ -47,6 +47,14 @@ GOOGLE_AUTH_URL  = "https://accounts.google.com/o/oauth2/v2/auth"
 GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token"
 GOOGLE_USER_URL  = "https://www.googleapis.com/oauth2/v3/userinfo"
 
+def get_google_redirect_uri():
+    host = (request.host or "").split(":", 1)[0].lower()
+    if host in {"localhost", "127.0.0.1"}:
+        return url_for("auth_google_callback", _external=True)
+    if GOOGLE_REDIRECT_URI and not GOOGLE_REDIRECT_URI.startswith(("http://localhost", "http://127.0.0.1")):
+        return GOOGLE_REDIRECT_URI
+    return url_for("auth_google_callback", _external=True)
+
 # Supabase client (lazy init agar tidak crash di Vercel jika env var belum diset)
 _supabase_client: Client = None
 
@@ -319,15 +327,17 @@ def auth_login():
 # =====================
 @app.route("/auth/google")
 def auth_google():
-    if not GOOGLE_CLIENT_ID or not GOOGLE_REDIRECT_URI:
-        return "GOOGLE_CLIENT_ID atau GOOGLE_REDIRECT_URI belum diset!", 500
+    if not GOOGLE_CLIENT_ID:
+        return "GOOGLE_CLIENT_ID belum diset!", 500
 
     state = str(uuid.uuid4())
     session["oauth_state"] = state
+    redirect_uri = get_google_redirect_uri()
+    session["oauth_redirect_uri"] = redirect_uri
 
     params = {
         "client_id":     GOOGLE_CLIENT_ID,
-        "redirect_uri":  GOOGLE_REDIRECT_URI,
+        "redirect_uri":  redirect_uri,
         "response_type": "code",
         "scope":         "openid email profile",
         "state":         state,
@@ -358,12 +368,13 @@ def auth_google_callback():
         return redirect(url_for("login_page") + "?error=google_denied")
 
     # Tukar code → access token
+    redirect_uri = session.pop("oauth_redirect_uri", None) or get_google_redirect_uri()
     try:
         token_resp = requests.post(GOOGLE_TOKEN_URL, data={
             "code":          code,
             "client_id":     GOOGLE_CLIENT_ID,
             "client_secret": GOOGLE_CLIENT_SECRET,
-            "redirect_uri":  GOOGLE_REDIRECT_URI,
+            "redirect_uri":  redirect_uri,
             "grant_type":    "authorization_code",
         }, timeout=15)
         token_resp.raise_for_status()
