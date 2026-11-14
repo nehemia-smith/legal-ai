@@ -183,7 +183,7 @@ def landing():
 
 @app.route("/prototype")
 def prototype():
-    return render_template("prototype.html")
+    return redirect(url_for("landing"))
 
 @app.route("/chat")
 @login_required
@@ -224,7 +224,9 @@ def login_page():
 
 @app.route("/register")
 def register_page():
-    return redirect(url_for("login_page"))
+    if "user" in session:
+        return redirect(url_for("chat"))
+    return render_template("register.html")
 
 @app.route("/logout")
 def logout():
