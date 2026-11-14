@@ -119,6 +119,28 @@
       padding-top: 28px
     }
 
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      font-size: .9rem
+    }
+
+    .nav-links a {
+      color: #b4c0bd;
+      text-decoration: none
+    }
+
+    .nav-links a:hover { color: var(--bone) }
+
+    .nav-links .nav-cta {
+      color: var(--night);
+      background: var(--mint);
+      border-radius: 999px;
+      padding: 10px 16px;
+      font-weight: 600
+    }
+
     .logo {
       font: 400 1.6rem/1 var(--serif);
       text-decoration: none
@@ -144,6 +166,15 @@
       align-self: center;
       padding-bottom: 40px;
       max-width: 640px
+    }
+
+    .eyebrow {
+      color: var(--mint);
+      font-size: .76rem;
+      font-weight: 600;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      margin: 0 0 18px
     }
 
     .copy h1 {
@@ -307,6 +338,62 @@
       margin: 14px 0 0
     }
 
+    .workflow-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 42px
+    }
+
+    .workflow-card {
+      padding: 22px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 14px
+    }
+
+    .workflow-card .num {
+      color: var(--accent);
+      font-size: .78rem;
+      font-weight: 600;
+      letter-spacing: .1em
+    }
+
+    .workflow-card h3 { font-size: 1.55rem; margin: 14px 0 8px }
+    .workflow-card p { margin: 0; color: var(--muted); font-size: .94rem; line-height: 1.5 }
+
+    .trust {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 38px;
+      padding-top: 24px;
+      border-top: 1px solid var(--line)
+    }
+
+    .trust strong { display: block; font: 400 1.5rem/1 var(--serif); margin-bottom: 6px }
+    .trust span { color: var(--muted); font-size: .88rem }
+
+    .dark-grid {
+      max-width: 880px;
+      margin: 38px auto 0;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      text-align: left
+    }
+
+    .dark-grid div {
+      padding: 18px;
+      border: 1px solid #26353b;
+      border-radius: 12px;
+      color: #b4c0bd
+    }
+
+    .dark-grid strong { display: block; color: var(--bone); margin-bottom: 6px }
+
+    .cta-row { display: flex; justify-content: center; align-items: center; gap: 16px; flex-wrap: wrap }
+
     .feat {
       list-style: none;
       margin: 0;
@@ -366,12 +453,15 @@
         background: linear-gradient(0deg, rgba(7, 11, 18, .9), rgba(7, 11, 18, 0) 62%)
       }
 
-      .nav div a:not(.btn) {
+    .nav-links a:not(.nav-cta) {
         display: none
       }
 
       .split,
-      .feat li {
+      .feat li,
+      .workflow-grid,
+      .trust,
+      .dark-grid {
         grid-template-columns: 1fr
       }
 
@@ -400,12 +490,22 @@
 <body>
   <header class="hero">
     <canvas id="c" aria-hidden="true"></canvas>
-    <div class="nav"><a class="logo" href="{{ url_for('landing') }}">Legatia</a></div>
+    <div class="nav">
+      <a class="logo" href="#">Legatia</a>
+      <div class="nav-links">
+        <a href="#cara-kerja">Cara kerja</a>
+        <a href="#fitur">Fitur</a>
+        <a href="{{ url_for('login_page') }}">Masuk</a>
+        <a class="nav-cta" href="{{ url_for('register_page') }}">Mulai gratis</a>
+      </div>
+    </div>
     <div class="copy">
-      <h1>Tanya hukum. Dapatkan jawaban yang <i>bisa diperiksa</i>.</h1>
-      <p>Legatia membaca pertanyaan Anda, menunjuk pasal dan peraturan yang relevan, dan menyebut sumbernya. Anda tetap
-        memegang keputusan.</p>
-      <a class="btn" href="{{ url_for('login_page') }}">Mulai bertanya</a><a class="ghost" href="#demo">Lihat contoh</a>
+      <p class="eyebrow">AI legal untuk pekerjaan yang perlu dipertanggungjawabkan</p>
+      <h1>Riset hukum yang <i>bisa diperiksa</i>.</h1>
+      <p>Mulai dari satu pertanyaan, lanjutkan ke dokumen, opini, atau review. Legatia menjaga fakta, sumber, dan keputusan Anda tetap berada dalam satu workspace.</p>
+      <a class="btn" href="{{ url_for('register_page') }}">Mulai gratis</a><a class="ghost" href="#demo">Lihat contoh</a>
+      <ul class="legend"><li>Rujukan per klaim</li><li>Status regulasi</li><li>Workspace berbasis matter</li></ul>
+
     </div>
   </header>
 
@@ -413,14 +513,13 @@
     <div class="in split">
       <div>
         <h2>Satu pertanyaan, jawaban dengan rujukan.</h2>
-        <p class="lead">Tanyakan dengan bahasa biasa. Setiap jawaban menunjuk pasal dan peraturan yang dirujuk.</p>
+        <p class="lead">Tanyakan dengan bahasa biasa. Legatia menunjukkan pasal yang dipakai, status regulasinya, dan bagian yang masih perlu ditinjau.</p>
       </div>
       <div>
         <div class="chat" id="chat" aria-live="polite">
           <div class="m u" id="q">Apakah kontrak kerja saya bisa diperpanjang otomatis?</div>
           <div class="m a" id="r"><span id="t"></span>
-            <div class="chips" id="ch"><span>Pasal 1338 · KUH Perdata</span><span>Pasal 59 · UU Ketenagakerjaan</span>
-            </div>
+            <div class="chips" id="ch"><span>Pasal 4 · sumber asli</span><span>Berlaku · 2026</span><span>Confidence · Tinggi</span></div>
           </div>
         </div>
         <p class="note">Contoh ilustrasi. Bukan nasihat hukum dan tidak menggantikan advokat.</p>
@@ -428,64 +527,36 @@
     </div>
   </section>
 
-  <section style="padding-top:0">
-    <div class="in split">
-      <div>
-        <h2>Bidang hukum yang bisa Anda tanyakan.</h2>
-        <p class="lead">Contoh dasar hukum yang menjadi rujukan. Periksa selalu versi terbaru peraturannya.</p>
-      </div>
-      <ul class="feat">
-        <li>
-          <h3>Perdata & kontrak</h3>
-          <p>KUH Perdata, perjanjian jual beli, sewa, dan utang piutang.</p>
-        </li>
-        <li>
-          <h3>Ketenagakerjaan</h3>
-          <p>UU Ketenagakerjaan, kontrak kerja, PHK, dan hak pekerja.</p>
-        </li>
-        <li>
-          <h3>Pertanahan</h3>
-          <p>UU Pokok Agraria, sertifikat, dan sengketa tanah.</p>
-        </li>
-        <li>
-          <h3>Perseroan & usaha</h3>
-          <p>UU Perseroan Terbatas, pendirian usaha, dan perjanjian bisnis.</p>
-        </li>
-        <li>
-          <h3>Keluarga</h3>
-          <p>UU Perkawinan, perceraian, hak asuh, dan waris.</p>
-        </li>
-      </ul>
-    </div>
-  </section>
-
-  <section id="fitur" style="padding-top:0">
+  <section id="cara-kerja">
     <div class="in">
-      <ul class="feat">
-        <li>
-          <h3>Jelaskan istilah</h3>
-          <p>Terangkan istilah hukum dalam bahasa sehari-hari, dan tunjuk pasal yang relevan.</p>
-        </li>
-        <li>
-          <h3>Cari dasar hukum</h3>
-          <p>Temukan peraturan yang terkait dengan pertanyaan Anda, lengkap dengan nomor dan pasalnya.</p>
-        </li>
-        <li>
-          <h3>Susun draf</h3>
-          <p>Buat draf surat atau perjanjian sederhana yang bisa Anda sunting sendiri.</p>
-        </li>
-        <li>
-          <h3>Serahkan ke manusia</h3>
-          <p>Untuk perkara rumit, Legatia menyarankan konsultasi dengan advokat.</p>
-        </li>
-      </ul>
+      <div class="split">
+        <div>
+          <h2>Dari pertanyaan sampai siap ditinjau.</h2>
+          <p class="lead">Pilih pekerjaan Anda. Legatia mengumpulkan konteks, mengerjakan analisis, lalu menyimpan hasilnya ke Matter.</p>
+        </div>
+        <div class="workflow-grid">
+          <article class="workflow-card"><span class="num">01</span><h3>Pilih tugas</h3><p>Tanya hukum, riset regulasi, drafting, review, opini, terjemahan, atau monitoring.</p></article>
+          <article class="workflow-card"><span class="num">02</span><h3>Berikan konteks</h3><p>Masukkan fakta, dokumen, posisi pihak, yurisdiksi, dan tingkat kedalaman yang dibutuhkan.</p></article>
+          <article class="workflow-card"><span class="num">03</span><h3>Verifikasi hasil</h3><p>Buka sitasi, cek status aturan, bandingkan sumber, dan revisi sebelum hasil digunakan.</p></article>
+        </div>
+      </div>
+      <div class="trust" id="fitur">
+        <div><strong>Riset</strong><span>Regulasi, putusan, dan hubungan antaraturan.</span></div>
+        <div><strong>Dokumen</strong><span>Draft, review, redline, dan legal opinion.</span></div>
+        <div><strong>Kontrol</strong><span>Matter, approval, role, dan audit trail.</span></div>
+      </div>
     </div>
   </section>
 
   <section id="mulai" class="dark">
-    <h2>Pahami posisi hukum Anda lebih cepat.</h2>
-    <p>Masuk dan ajukan pertanyaan pertama Anda hari ini. Riwayat percakapan Anda tersimpan di akun Anda.</p>
-    <a class="btn" href="{{ url_for('login_page') }}">Mulai sekarang</a>
+    <h2>Bangun keputusan hukum dari sumber yang jelas.</h2>
+    <p>Mulai dari riset kecil atau bawa seluruh workflow tim Anda ke satu workspace.</p>
+    <div class="dark-grid">
+      <div><strong>Untuk individu</strong>Mulai riset, drafting, dan review dengan alur yang ringan.</div>
+      <div><strong>Untuk tim legal</strong>Kelola Matter, komentar, approval, dan versi dokumen.</div>
+      <div><strong>Untuk enterprise</strong>Tambahkan SSO, knowledge base, ethical wall, dan audit log.</div>
+    </div>
+    <div class="cta-row" style="margin-top:34px"><a class="btn" href="{{ url_for('register_page') }}">Mulai gratis</a><a class="ghost" href="{{ url_for('login_page') }}">Sudah punya akun? Masuk</a></div>
   </section>
   <footer><span>© 2026 Legatia</span><span>Legatia adalah alat bantu informasi hukum, bukan pengganti advokat.</span>
   </footer>
@@ -496,7 +567,7 @@
       var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
       // demo percakapan
       var q = document.getElementById('q'), r = document.getElementById('r'), t = document.getElementById('t'), ch = document.getElementById('ch');
-      var txt = 'Dari pertanyaan Anda, perpanjangan otomatis biasanya bergantung pada isi klausul kontrak dan aturan yang berlaku. Periksa bagian masa berlaku dan syarat perpanjangan, lalu konsultasikan dengan advokat sebelum menandatangani.';
+      var txt = 'Dari dokumen yang Anda unggah, masa kontrak tercantum 12 bulan dan perpanjangan disebut memerlukan kesepakatan tertulis, bukan otomatis. Periksa juga aturan yang berlaku untuk jenis kontrak Anda dan konsultasikan dengan advokat sebelum menandatangani.';
       function play() {
         q.classList.add('on'); setTimeout(function () {
           r.classList.add('on'); var i = 0;
@@ -570,12 +641,12 @@
       [-1.25, -1.22, -1.19].forEach(function (y, k) { part(new THREE.BoxGeometry(.55, .03, .4), 0, y, 0, panL, paper).rotation.y = k * .18 - .1 });
       // palu hakim: gagang & kepala bubutan, cincin emas, kayu berserat
       var gv = new THREE.Group(); gv.position.set(-2.4, -1.84, 1.6); gv.scale.setScalar(.85); W.add(gv);
-      var sw = new THREE.Group(); sw.position.y = .195; gv.add(sw);
+      var sw = new THREE.Group(); sw.position.y = .54; gv.add(sw);
       part(lathe([[0, 0], [.07, 0], [.075, .05], [.055, .12], [.05, .2], [.05, 1.0], [.06, 1.1], [0, 1.22]], 0, 40), 0, 0, 0, sw, wood);
-      var hd = part(lathe([[0, -.4], [.14, -.4], [.2, -.36], [.215, -.3], [.2, -.25], [.2, .25], [.215, .3], [.2, .36], [.14, .4], [0, .4]], 0, 48), 0, 1.2, 0, sw, wood); hd.rotation.x = Math.PI / 2;
-      [-.3, .3].forEach(function (z) { part(new THREE.TorusGeometry(.218, .018, 10, 48), 0, 1.2, z, sw) });
-      part(lathe([[0, 0], [.52, 0], [.54, .02], [.54, .1], [.5, .14], [0, .14]], 0, 56), 1.19, 0, 0, gv, wood);
-      var inl = part(new THREE.TorusGeometry(.46, .012, 8, 64), 1.19, .141, 0, gv); inl.rotation.x = Math.PI / 2;
+      var hd = part(lathe([[0, -.4], [.14, -.4], [.2, -.36], [.215, -.3], [.2, -.25], [.2, .25], [.215, .3], [.2, .36], [.14, .4], [0, .4]], 0, 48), 0, 1.2, 0, sw, wood); hd.rotation.z = Math.PI / 2;
+      [-.3, .3].forEach(function (x) { var rg = part(new THREE.TorusGeometry(.218, .018, 10, 48), x, 1.2, 0, sw); rg.rotation.y = Math.PI / 2 });
+      part(lathe([[0, 0], [.52, 0], [.54, .02], [.54, .1], [.5, .14], [0, .14]], 0, 56), 1.2, 0, 0, gv, wood);
+      var inl = part(new THREE.TorusGeometry(.46, .012, 8, 64), 1.2, .141, 0, gv); inl.rotation.x = Math.PI / 2;
       var rings = [[1.7, 1.2, 0], [2.1, .3, .8]].map(function (v) { var m = new THREE.Mesh(new THREE.TorusGeometry(v[0], .008, 8, 140), new THREE.MeshBasicMaterial({ color: mint, transparent: true, opacity: .5 })); m.rotation.set(v[1], v[2], 0); W.add(m); return m });
       function tex(kind) {
         var c = document.createElement('canvas'); c.width = 256; c.height = 352; var x = c.getContext('2d');
@@ -617,7 +688,7 @@
         core.rotation.y = t * .4; core.rotation.x = t * .25; var p = 1 + .05 * Math.sin(t * 2); core.scale.setScalar(p); glow.scale.setScalar(p * 1.05);
         rings[0].rotation.z = t * .3; rings[1].rotation.z = -t * .2; pts.rotation.y = -t * .03;
         beam.rotation.z = Math.sin(t * .7) * .1; panL.rotation.z = panR.rotation.z = -beam.rotation.z;
-        sw.rotation.z = .5 - 1.95 * Math.pow(Math.abs(Math.sin(t * 1.3)), 12);
+        sw.rotation.z = .55 - (.55 + Math.PI / 2) * Math.min(1, 1.6 * Math.pow(Math.abs(Math.sin(t * 1.3)), 8));
         var sy = Math.sin(t * .8) * 2.4; scan.position.y = sy; scan.material.opacity = .35 + .45 * Math.abs(Math.cos(t * .8));
         docs.forEach(function (d) {
           var u = d.userData, a = u.a + t * u.s;
