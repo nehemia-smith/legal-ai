@@ -119,28 +119,6 @@
       padding-top: 28px
     }
 
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 24px;
-      font-size: .9rem
-    }
-
-    .nav-links a {
-      color: #b4c0bd;
-      text-decoration: none
-    }
-
-    .nav-links a:hover { color: var(--bone) }
-
-    .nav-links .nav-cta {
-      color: var(--night);
-      background: var(--mint);
-      border-radius: 999px;
-      padding: 10px 16px;
-      font-weight: 600
-    }
-
     .logo {
       font: 400 1.6rem/1 var(--serif);
       text-decoration: none
@@ -166,15 +144,6 @@
       align-self: center;
       padding-bottom: 40px;
       max-width: 640px
-    }
-
-    .eyebrow {
-      color: var(--mint);
-      font-size: .76rem;
-      font-weight: 600;
-      letter-spacing: .14em;
-      text-transform: uppercase;
-      margin: 0 0 18px
     }
 
     .copy h1 {
@@ -338,62 +307,6 @@
       margin: 14px 0 0
     }
 
-    .workflow-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin-top: 42px
-    }
-
-    .workflow-card {
-      padding: 22px;
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 14px
-    }
-
-    .workflow-card .num {
-      color: var(--accent);
-      font-size: .78rem;
-      font-weight: 600;
-      letter-spacing: .1em
-    }
-
-    .workflow-card h3 { font-size: 1.55rem; margin: 14px 0 8px }
-    .workflow-card p { margin: 0; color: var(--muted); font-size: .94rem; line-height: 1.5 }
-
-    .trust {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 18px;
-      margin-top: 38px;
-      padding-top: 24px;
-      border-top: 1px solid var(--line)
-    }
-
-    .trust strong { display: block; font: 400 1.5rem/1 var(--serif); margin-bottom: 6px }
-    .trust span { color: var(--muted); font-size: .88rem }
-
-    .dark-grid {
-      max-width: 880px;
-      margin: 38px auto 0;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      text-align: left
-    }
-
-    .dark-grid div {
-      padding: 18px;
-      border: 1px solid #26353b;
-      border-radius: 12px;
-      color: #b4c0bd
-    }
-
-    .dark-grid strong { display: block; color: var(--bone); margin-bottom: 6px }
-
-    .cta-row { display: flex; justify-content: center; align-items: center; gap: 16px; flex-wrap: wrap }
-
     .feat {
       list-style: none;
       margin: 0;
@@ -453,15 +366,12 @@
         background: linear-gradient(0deg, rgba(7, 11, 18, .9), rgba(7, 11, 18, 0) 62%)
       }
 
-    .nav-links a:not(.nav-cta) {
+      .nav div a:not(.btn) {
         display: none
       }
 
       .split,
-      .feat li,
-      .workflow-grid,
-      .trust,
-      .dark-grid {
+      .feat li {
         grid-template-columns: 1fr
       }
 
@@ -490,21 +400,12 @@
 <body>
   <header class="hero">
     <canvas id="c" aria-hidden="true"></canvas>
-    <div class="nav">
-      <a class="logo" href="#">Legatia</a>
-      <div class="nav-links">
-        <a href="#cara-kerja">Cara kerja</a>
-        <a href="#fitur">Fitur</a>
-        <a href="{{ url_for('login_page') }}">Masuk</a>
-        <a class="nav-cta" href="{{ url_for('register_page') }}">Mulai gratis</a>
-      </div>
-    </div>
+    <div class="nav"><a class="logo" href="#">Legatia</a></div>
     <div class="copy">
-      <p class="eyebrow">AI legal untuk pekerjaan yang perlu dipertanggungjawabkan</p>
-      <h1>Riset hukum yang <i>bisa diperiksa</i>.</h1>
-      <p>Mulai dari satu pertanyaan, lanjutkan ke dokumen, opini, atau review. Legatia menjaga fakta, sumber, dan keputusan Anda tetap berada dalam satu workspace.</p>
-      <a class="btn" href="{{ url_for('register_page') }}">Mulai gratis</a><a class="ghost" href="#demo">Lihat contoh</a>
-      <ul class="legend"><li>Rujukan per klaim</li><li>Status regulasi</li><li>Workspace berbasis matter</li></ul>
+      <h1>Tanya hukum. Dapatkan jawaban yang <i>bisa diperiksa</i>.</h1>
+      <p>Legatia membaca kontrak Anda, menunjuk pasal dan peraturan yang relevan, dan menyebut sumbernya. Anda tetap
+        memegang keputusan.</p>
+      <a class="btn" href="#mulai">Mulai bertanya</a><a class="ghost" href="#demo">Lihat contoh</a>
 
     </div>
   </header>
@@ -513,13 +414,13 @@
     <div class="in split">
       <div>
         <h2>Satu pertanyaan, jawaban dengan rujukan.</h2>
-        <p class="lead">Tanyakan dengan bahasa biasa. Legatia menunjukkan pasal yang dipakai, status regulasinya, dan bagian yang masih perlu ditinjau.</p>
+        <p class="lead">Unggah dokumen, tanyakan dengan bahasa biasa. Setiap jawaban menunjuk bagian yang dipakai.</p>
       </div>
       <div>
         <div class="chat" id="chat" aria-live="polite">
           <div class="m u" id="q">Apakah kontrak kerja saya bisa diperpanjang otomatis?</div>
           <div class="m a" id="r"><span id="t"></span>
-            <div class="chips" id="ch"><span>Pasal 4 · sumber asli</span><span>Berlaku · 2026</span><span>Confidence · Tinggi</span></div>
+            <div class="chips" id="ch"><span>Pasal 4 · dokumen Anda</span><span>Pasal 9 · dokumen Anda</span></div>
           </div>
         </div>
         <p class="note">Contoh ilustrasi. Bukan nasihat hukum dan tidak menggantikan advokat.</p>
@@ -527,36 +428,10 @@
     </div>
   </section>
 
-  <section id="cara-kerja">
-    <div class="in">
-      <div class="split">
-        <div>
-          <h2>Dari pertanyaan sampai siap ditinjau.</h2>
-          <p class="lead">Pilih pekerjaan Anda. Legatia mengumpulkan konteks, mengerjakan analisis, lalu menyimpan hasilnya ke Matter.</p>
-        </div>
-        <div class="workflow-grid">
-          <article class="workflow-card"><span class="num">01</span><h3>Pilih tugas</h3><p>Tanya hukum, riset regulasi, drafting, review, opini, terjemahan, atau monitoring.</p></article>
-          <article class="workflow-card"><span class="num">02</span><h3>Berikan konteks</h3><p>Masukkan fakta, dokumen, posisi pihak, yurisdiksi, dan tingkat kedalaman yang dibutuhkan.</p></article>
-          <article class="workflow-card"><span class="num">03</span><h3>Verifikasi hasil</h3><p>Buka sitasi, cek status aturan, bandingkan sumber, dan revisi sebelum hasil digunakan.</p></article>
-        </div>
-      </div>
-      <div class="trust" id="fitur">
-        <div><strong>Riset</strong><span>Regulasi, putusan, dan hubungan antaraturan.</span></div>
-        <div><strong>Dokumen</strong><span>Draft, review, redline, dan legal opinion.</span></div>
-        <div><strong>Kontrol</strong><span>Matter, approval, role, dan audit trail.</span></div>
-      </div>
-    </div>
-  </section>
-
   <section id="mulai" class="dark">
-    <h2>Bangun keputusan hukum dari sumber yang jelas.</h2>
-    <p>Mulai dari riset kecil atau bawa seluruh workflow tim Anda ke satu workspace.</p>
-    <div class="dark-grid">
-      <div><strong>Untuk individu</strong>Mulai riset, drafting, dan review dengan alur yang ringan.</div>
-      <div><strong>Untuk tim legal</strong>Kelola Matter, komentar, approval, dan versi dokumen.</div>
-      <div><strong>Untuk enterprise</strong>Tambahkan SSO, knowledge base, ethical wall, dan audit log.</div>
-    </div>
-    <div class="cta-row" style="margin-top:34px"><a class="btn" href="{{ url_for('register_page') }}">Mulai gratis</a><a class="ghost" href="{{ url_for('login_page') }}">Sudah punya akun? Masuk</a></div>
+    <h2>Pahami posisi hukum Anda lebih cepat.</h2>
+    <p>Daftar dan ajukan pertanyaan pertama Anda hari ini. Dokumen Anda tidak dibagikan ke pihak lain.</p>
+    <a class="btn" href="mailto:halo@contoh-legatia.id">Mulai sekarang</a>
   </section>
   <footer><span>© 2026 Legatia</span><span>Legatia adalah alat bantu informasi hukum, bukan pengganti advokat.</span>
   </footer>
