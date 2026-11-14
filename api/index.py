@@ -179,7 +179,7 @@ def upsert_user(email, name, avatar=None, provider="google"):
 # =====================
 @app.route("/")
 def landing():
-    return render_template("landing.html")
+    return render_template("prototype.html")
 
 @app.route("/prototype")
 def prototype():

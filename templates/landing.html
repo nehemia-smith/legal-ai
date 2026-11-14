@@ -462,14 +462,14 @@
   <header class="header">
     <div class="header-left">
       <button class="menu-btn" title="Menu">☰</button>
-      <a class="logo" href="index.html">Legatia</a>
+      <a class="logo" href="{{ url_for('landing') }}">Legatia</a>
     </div>
     <div class="header-right">
       <div class="user-chip">
         <div class="avatar" id="avatar">N</div>
         <span id="user-name">Nehemia Smith</span>
       </div>
-      <button class="logout">Keluar</button>
+      <a class="logout" href="{{ url_for('logout') }}">Keluar</a>
     </div>
   </header>
 
@@ -560,7 +560,7 @@
     }
 
     document.getElementById('edit-profile').addEventListener('click', () => {
-      window.location.href = 'prototype.html';
+      window.location.href = '{{ url_for("prototype") }}';
     });
 
     const welcome = document.getElementById('welcome');
