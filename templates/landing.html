@@ -545,7 +545,7 @@
     // Data dari questionnaire (disimpan oleh prototype.html)
     const profile = JSON.parse(sessionStorage.getItem('legatia_profile') || 'null');
 
-    // Nama pengguna: nanti diisi dari session Flask, misalnya const userName = "{{ user.name }}";
+    // Nama pengguna akan diisi dari data sesi jika halaman ini membutuhkan login.
     const userName = 'Nehemia Smith';
     document.getElementById('user-name').textContent = userName;
     document.getElementById('avatar').textContent = userName.charAt(0);
