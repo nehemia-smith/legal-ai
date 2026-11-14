@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for, session
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session, send_from_directory
 import requests
 import os
 import uuid
@@ -190,7 +190,16 @@ def prototype():
 def chat():
     if not session.get("user", {}).get("onboarding"):
         return redirect(url_for("onboarding_page"))
-    return render_template("index.html", user=session["user"])
+    return send_from_directory(os.path.join(_base_dir, "chat"), "chat.html")
+
+@app.route("/chat/<path:filename>")
+def chat_asset(filename):
+    return send_from_directory(os.path.join(_base_dir, "chat"), filename)
+
+@app.route("/api/me")
+@login_required
+def current_user():
+    return jsonify({"user": session.get("user", {})})
 
 @app.route("/onboarding")
 @login_required

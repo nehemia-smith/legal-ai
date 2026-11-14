@@ -1,8 +1,17 @@
-// TODO: ganti dengan nama dari session Flask, misalnya const userName = "{{ user.name }}";
-const userName = 'Nehemia Smith';
-document.getElementById('user-name').textContent = userName;
-document.getElementById('avatar').textContent = userName.charAt(0);
-document.getElementById('greet-name').textContent = userName.split(' ')[0];
+let userName = 'Pengguna';
+
+async function loadUser() {
+    try {
+        const res = await fetch('/api/me');
+        if (!res.ok) return;
+        const data = await res.json();
+        userName = data.user?.name || data.user?.email || userName;
+    } catch (_) { }
+    document.getElementById('user-name').textContent = userName;
+    document.getElementById('avatar').textContent = userName.charAt(0).toUpperCase();
+    document.getElementById('greet-name').textContent = userName.split(' ')[0];
+}
+loadUser();
 
 // ---------- Data demo (ganti dengan respons Flask /chat) ----------
 const SOURCES = {
@@ -113,6 +122,12 @@ function renderAnswer(a) {
 
     const followups = a.followups.map(f => `<button class="followup">${esc(f)}</button>`).join('');
 
+    const confidence = a.conf == null ? '' : `
+    <div class="conf">Tingkat keyakinan
+      <span class="conf-bar"><i style="width:${a.conf}%"></i></span>
+      <b>${a.conf}%</b>
+    </div>`;
+
     return `
     <div class="meta">
       <span class="chip-mode">${esc(MODE_LABEL[mode] || a.mode)}</span>
@@ -123,10 +138,7 @@ function renderAnswer(a) {
     <div class="block-label">Dasar hukum</div>
     <div class="src-list">${srcCards}</div>
 
-    <div class="conf">Tingkat keyakinan
-      <span class="conf-bar"><i style="width:${a.conf}%"></i></span>
-      <b>${a.conf}%</b>
-    </div>
+    ${confidence}
 
     <details>
       <summary>Fakta yang digunakan dan asumsi</summary>
@@ -192,15 +204,37 @@ function ask(question) {
         if (s) s.textContent = STAGES[i];
     }, 600);
 
-    // TODO: ganti dengan fetch ke route Flask /chat (Gemini + Pasal.id)
-    setTimeout(() => {
+    fetch('/tanya', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pertanyaan: question })
+    }).then(async res => {
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Pertanyaan gagal dikirim');
+        return data;
+    }).then(data => {
         clearInterval(timer);
         typing.remove();
-        const a = ANSWERS[question];
-        addBot(a ? renderAnswer(a) : renderGuard());
+        const answer = data.jawaban || 'Belum ada jawaban yang dapat ditampilkan.';
+        const a = {
+            mode: MODE_LABEL[mode],
+            paras: [{ t: answer, c: [] }],
+            src: [], conf: null,
+            facts: 'Berdasarkan pertanyaan yang Anda kirim.',
+            assumptions: 'Fakta tambahan belum diberikan.',
+            verify: 'Periksa sitasi dan sumber asli sebelum digunakan.',
+            followups: []
+        };
+        addBot(renderAnswer(a));
         setBusy(false);
         scrollDown();
-    }, 1800);
+    }).catch(() => {
+        clearInterval(timer);
+        typing.remove();
+        addBot(renderGuard());
+        setBusy(false);
+        scrollDown();
+    });
     scrollDown();
 }
 
@@ -281,3 +315,4 @@ document.getElementById('new-chat').addEventListener('click', () => {
 });
 
 document.getElementById('menu').addEventListener('click', () => sidebar.classList.toggle('open'));
+document.getElementById('logout').addEventListener('click', () => { window.location.href = '/logout'; });
